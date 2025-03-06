@@ -1,0 +1,6 @@
+@Keeper_ContentService_HostAddress = http://localhost:5150
+
+GET {{Keeper_ContentService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
