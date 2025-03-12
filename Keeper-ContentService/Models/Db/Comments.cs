@@ -11,6 +11,9 @@ namespace Keeper_ContentService.Models.Db
         [JsonIgnore]
         public virtual Articles Article { get; set; }
 
+        [Required]
+        public Guid UserId { get; set; }
+
         public Guid? PerantId { get; set; }
 
         [Required]

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Keeper_ContentService.Models.Db
 {
-    public class Likes : BaseModel
+    public class LikedArticles : BaseModel
     {
         [Required]
         public Guid ArticlesId { get; set; }
