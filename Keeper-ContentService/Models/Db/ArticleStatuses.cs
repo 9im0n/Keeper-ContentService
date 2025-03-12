@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keeper_ContentService.Models.Db
 {
-    public class Categories : BaseModel
+    public class ArticleStatuses : BaseModel
     {
         [Required]
         public string Name { get; set; }

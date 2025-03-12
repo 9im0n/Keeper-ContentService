@@ -1,7 +1,13 @@
-
 using Keeper_ContentService.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Keeper_ContentService.Repositories.Interfaces;
+using Keeper_ContentService.Repositories.Implementations;
+using Keeper_ContentService.Services.Interfaces;
+using Keeper_ContentService.Services.Implementations;
 
 namespace Keeper_ContentService
 {
@@ -13,6 +19,26 @@ namespace Keeper_ContentService
 
             // Add services to the container.
 
+            // Auth
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = builder.Configuration.GetSection("JwtSettings:ValidIssuer").Value,
+                        ValidateAudience = true,
+                        ValidAudience = builder.Configuration.GetSection("JwtSettings:ValidAudience").Value,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
+                            builder.Configuration.GetSection("JwtSettings:IssuerSigningKey").Value
+                            )),
+                        ValidAlgorithms = new string[] { SecurityAlgorithms.HmacSha256 },
+                    };
+                });
+
             // Db
 
             string? connection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -20,9 +46,14 @@ namespace Keeper_ContentService
 
             // Repositories
 
-
+            builder.Services.AddScoped<IArticlesRepository, ArticlesRepository>();
+            builder.Services.AddScoped<IArticleStatusesRepository, ArticleStatusesRepository>();
+            builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+            builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
 
             // Services
+
+            builder.Services.AddScoped<IArticleService, ArticleService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
