@@ -6,6 +6,5 @@ namespace Keeper_ContentService.Repositories.Interfaces
     {
         public Task<ICollection<Articles>> GetByUserIdAsync(Guid userId);
         public Task<ICollection<Articles>> GetByCategoryIdAsync(Guid categoryId);
-        public Task<Articles?> GetArticleByUserIdAsync(Guid userId, Guid draftId);
     }
 }

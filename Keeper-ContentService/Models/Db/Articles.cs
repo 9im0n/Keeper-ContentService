@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Keeper_ContentService.Models.Db
 {
@@ -8,9 +9,10 @@ namespace Keeper_ContentService.Models.Db
         public string Title { get; set; }
 
         [Required]
-        public Categories Category { get; set; }
+        public virtual Categories Category { get; set; }
 
         [Required]
+        [JsonIgnore]
         public Guid CategoryId { get; set; }
 
         [Required]
@@ -18,9 +20,10 @@ namespace Keeper_ContentService.Models.Db
         public string Content { get; set; }
 
         [Required]
-        public ArticleStatuses Statuse { get; set; }
+        public virtual ArticleStatuses Statuse { get; set; }
 
         [Required]
+        [JsonIgnore]
         public Guid StatuseId { get; set; }
 
         [Required]

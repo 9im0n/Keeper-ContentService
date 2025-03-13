@@ -5,6 +5,7 @@ using Keeper_ContentService.Services.Implementations;
 using Keeper_ContentService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 
 namespace Keeper_ContentService.Controllers
 {
@@ -41,7 +42,7 @@ namespace Keeper_ContentService.Controllers
 
 
         [Authorize]
-        [HttpGet("{id:guid}")]
+        [HttpGet("{draftId:guid}")]
         public async Task<IActionResult> GetById(Guid draftId)
         {
             Guid userId = new Guid(User.FindFirst("UserId")?.Value);
@@ -74,6 +75,28 @@ namespace Keeper_ContentService.Controllers
             try
             {
                 ServiceResponse<Articles?> response = await _articleService.CreateDraftAsync(draft);
+
+                if (!response.IsSuccess)
+                    return StatusCode(statusCode: response.Status, new { message = response.Message });
+
+                return Ok(new { data = response.Data, message = response.Message });
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: 500, detail: $"Content Service: {ex.Message}\n{ex.InnerException}");
+            }
+        }
+
+
+        [Authorize]
+        [HttpDelete("{draftId:guid}")]
+        public async Task<IActionResult> Delete(Guid draftId)
+        {
+            Guid userId = new Guid(User.FindFirst("UserId").Value);
+
+            try
+            {
+                ServiceResponse<Articles?> response = await _articleService.DeleteDraftAsync(draftId, userId);
 
                 if (!response.IsSuccess)
                     return StatusCode(statusCode: response.Status, new { message = response.Message });
