@@ -2,6 +2,7 @@
 using Keeper_ContentService.Models.Db;
 using Keeper_ContentService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Keeper_ContentService.Repositories.Implementations
 {
@@ -14,13 +15,13 @@ namespace Keeper_ContentService.Repositories.Implementations
             _appDbContext = appDbContext;
         }
 
-        public async Task<ICollection<T>> GetAllAsync()
+        public virtual async Task<ICollection<T>> GetAllAsync()
         {
             return await _appDbContext.Set<T>().ToListAsync();
         }
 
 
-        public async Task<T?> GetByIdAsync(Guid id)
+        public virtual async Task<T?> GetByIdAsync(Guid id)
         {
             return await _appDbContext.Set<T>().FirstOrDefaultAsync(obj => obj.Id == id);
         }
@@ -28,9 +29,9 @@ namespace Keeper_ContentService.Repositories.Implementations
 
         public async Task<T?> CreateAsync(T entity)
         {
-            await _appDbContext.Set<T>().AddAsync(entity);
+            EntityEntry<T> obj = await _appDbContext.Set<T>().AddAsync(entity);
             await _appDbContext.SaveChangesAsync();
-            return entity;
+            return obj.Entity;
         }
 
 

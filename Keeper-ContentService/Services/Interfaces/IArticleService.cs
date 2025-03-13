@@ -9,6 +9,7 @@ namespace Keeper_ContentService.Services.Interfaces
         public Task<ServiceResponse<List<Articles>?>> GetDraftsByUserIdAsync(Guid userId); 
         public Task<ServiceResponse<Articles?>> GetDraftAsync(Guid userId, Guid draftId);
         public Task<ServiceResponse<Articles?>> CreateDraftAsync(DraftCreateDTO draftCreate);
+        public Task<ServiceResponse<Articles?>> DeleteDraftAsync(Guid draftId, Guid userId);
         //public Task<ServiceResponse<List<Articles>>> GetArticlesByUserIdAsync(Guid userId);
         //public Task<ServiceResponse<Articles?>> GetArticleAsync(Guid userId, Guid draftId);
     }
