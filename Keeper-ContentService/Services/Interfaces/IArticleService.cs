@@ -11,6 +11,7 @@ namespace Keeper_ContentService.Services.Interfaces
         public Task<ServiceResponse<Articles?>> CreateDraftAsync(DraftCreateDTO draftCreate);
         public Task<ServiceResponse<Articles?>> DeleteDraftAsync(Guid draftId, Guid userId);
         public Task<ServiceResponse<Articles?>> UpdateAsync(Guid userId, Guid draftId, UpdateDraftDTO updateDraft);
+        public Task<ServiceResponse<Articles?>> MarkAsReviewAsync(Guid userId, Guid draftId);
         //public Task<ServiceResponse<List<Articles>>> GetArticlesByUserIdAsync(Guid userId);
         //public Task<ServiceResponse<Articles?>> GetArticleAsync(Guid userId, Guid draftId);
     }

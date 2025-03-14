@@ -136,5 +136,27 @@ namespace Keeper_ContentService.Controllers
                 return Problem(statusCode: 500, detail: $"Content Service: {ex.Message}\n{ex.InnerException}");
             }
         }
+
+
+        [Authorize]
+        [HttpPost("{id:guid}/review")]
+        public async Task<IActionResult> Review(Guid id)
+        {
+            Guid userId = new Guid(User.FindFirst("UserId").Value);
+
+            try
+            {
+                ServiceResponse<Articles?> response = await _articleService.MarkAsReviewAsync(userId, id);
+
+                if (!response.IsSuccess)
+                    return StatusCode(statusCode: response.Status, new { message = response.Message });
+
+                return Ok(new { data = response.Data, message = response.Message });
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: 500, detail: $"Content Service: {ex.Message}\n{ex.InnerException}");
+            }
+        }
     }
 }

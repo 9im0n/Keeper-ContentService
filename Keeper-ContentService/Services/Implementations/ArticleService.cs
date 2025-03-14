@@ -9,10 +9,13 @@ namespace Keeper_ContentService.Services.Implementations
     public class ArticleService : IArticleService
     {
         private readonly IArticlesRepository _articlesRepository;
+        private readonly IArticlesStatusesService _articlesStatusesService;
 
-        public ArticleService(IArticlesRepository articlesRepository)
+        public ArticleService(IArticlesRepository articlesRepository,
+            IArticlesStatusesService articlesStatusesService)
         {
             _articlesRepository = articlesRepository;
+            _articlesStatusesService = articlesStatusesService;
         }
 
         public async Task<ServiceResponse<List<Articles>?>> GetDraftsByUserIdAsync(Guid userId)
@@ -89,6 +92,29 @@ namespace Keeper_ContentService.Services.Implementations
             draft = await _articlesRepository.UpdateAsync(draft);
 
             return ServiceResponse<Articles?>.Success(draft, message: "Draft has updated");
+        }
+
+
+        public async Task<ServiceResponse<Articles?>> MarkAsReviewAsync(Guid userId, Guid draftId)
+        {
+            Articles? draft = await _articlesRepository.GetByIdAsync(draftId);
+
+            if (draft == null)
+                return ServiceResponse<Articles?>.Fail(default, 404, "Draft doesn't exist.");
+
+            if (draft.UserId != userId)
+                return ServiceResponse<Articles?>.Fail(default, message: "You aren't owner of this draft.");
+
+            var status = await _articlesStatusesService.GetReviewStatusAsync();
+
+            if (!status.IsSuccess)
+                return ServiceResponse<Articles?>.Fail(default, status.Status, status.Message);
+
+            draft.StatuseId = status.Data.Id;
+
+            draft = await _articlesRepository.UpdateAsync(draft);
+
+            return ServiceResponse<Articles?>.Success(draft);
         }
     }
 }
