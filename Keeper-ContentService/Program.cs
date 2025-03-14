@@ -54,6 +54,7 @@ namespace Keeper_ContentService
             // Services
 
             builder.Services.AddScoped<IArticleService, ArticleService>();
+            builder.Services.AddScoped<IArticlesStatusesService, ArticleStatusesService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
