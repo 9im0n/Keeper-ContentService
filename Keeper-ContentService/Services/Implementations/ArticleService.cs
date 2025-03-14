@@ -68,7 +68,27 @@ namespace Keeper_ContentService.Services.Implementations
 
             draft = await _articlesRepository.DeleteAsync(draftId);
 
-            return ServiceResponse<Articles?>.Success(draft, message: "Draft has been deleted.");
+            return ServiceResponse<Articles?>.Success(draft, message: "Draft has deleted.");
+        }
+
+
+        public async Task<ServiceResponse<Articles?>> UpdateAsync(Guid userId, Guid draftId, UpdateDraftDTO updateDraft)
+        {
+            Articles? draft = await _articlesRepository.GetByIdAsync(draftId);
+
+            if (draft == null)
+                return ServiceResponse<Articles?>.Fail(default, 404, "Draft doesn't exist.");
+
+            if (draft.UserId != userId)
+                return ServiceResponse<Articles?>.Fail(default, message: "You aren't owner of this draft.");
+
+            draft.Title = updateDraft.Title;
+            draft.CategoryId = draft.CategoryId;
+            draft.Content = updateDraft.Content;
+
+            draft = await _articlesRepository.UpdateAsync(draft);
+
+            return ServiceResponse<Articles?>.Success(draft, message: "Draft has updated");
         }
     }
 }
