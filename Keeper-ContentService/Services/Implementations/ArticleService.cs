@@ -105,13 +105,43 @@ namespace Keeper_ContentService.Services.Implementations
             if (draft.UserId != userId)
                 return ServiceResponse<Articles?>.Fail(default, message: "You aren't owner of this draft.");
 
-            var status = await _articlesStatusesService.GetReviewStatusAsync();
+            var statuse = await _articlesStatusesService.GetReviewStatusAsync();
 
-            if (!status.IsSuccess)
-                return ServiceResponse<Articles?>.Fail(default, status.Status, status.Message);
+            if (!statuse.IsSuccess)
+                return ServiceResponse<Articles?>.Fail(default, statuse.Status, statuse.Message);
 
-            draft.StatuseId = status.Data.Id;
+            draft.StatuseId = statuse.Data.Id;
 
+            draft = await _articlesRepository.UpdateAsync(draft);
+
+            return ServiceResponse<Articles?>.Success(draft);
+        }
+
+
+        public async Task<ServiceResponse<Articles?>> PublicateDraft(Guid userId, Guid draftId)
+        {
+            Articles? draft = await _articlesRepository.GetByIdAsync(draftId);
+
+            if (draft == null)
+                return ServiceResponse<Articles?>.Fail(default, 404, "Draft doesn't exist.");
+
+            if (draft.UserId != userId)
+                return ServiceResponse<Articles?>.Fail(default, message: "You aren't owner of this draft.");
+
+            var statuse = await _articlesStatusesService.GetReadyForPublisStatusAsync();
+
+            if (!statuse.IsSuccess)
+                return ServiceResponse<Articles?>.Fail(default, statuse.Status, statuse.Message);
+
+            if (draft.StatuseId != statuse.Data.Id)
+                return ServiceResponse<Articles?>.Fail(default, message: "This draft has not been approved for publication.");
+            
+            var publishStatuse = await _articlesStatusesService.GetPublishedStatusAsync();
+
+            if (!publishStatuse.IsSuccess)
+                return ServiceResponse<Articles?>.Fail(default, publishStatuse.Status, publishStatuse.Message);
+
+            draft.StatuseId = publishStatuse.Data.Id;
             draft = await _articlesRepository.UpdateAsync(draft);
 
             return ServiceResponse<Articles?>.Success(draft);
