@@ -176,5 +176,24 @@ namespace Keeper_ContentService.Services.Implementations
 
             return ServiceResponse<Articles?>.Success(draft);
         }
+
+
+        public async Task<ServiceResponse<Articles?>> GetArticleById(Guid id)
+        {
+            Articles? article = await _articlesRepository.GetByIdAsync(id);
+
+            if (article == null)
+                return ServiceResponse<Articles?>.Fail(default, 404, "Article doesn't exist.");
+
+            var publishedStatuse = await _articlesStatusesService.GetPublishedStatusAsync();
+
+            if (!publishedStatuse.IsSuccess)
+                return ServiceResponse<Articles?>.Fail(default, publishedStatuse.Status, publishedStatuse.Message);
+
+            if (article.StatuseId != publishedStatuse.Data.Id)
+                return ServiceResponse<Articles?>.Fail(default, 404, "Article doesn't exist.");
+
+            return ServiceResponse<Articles?>.Success(article);
+        }
     }
 }
