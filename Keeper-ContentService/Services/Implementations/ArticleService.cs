@@ -89,6 +89,13 @@ namespace Keeper_ContentService.Services.Implementations
             draft.CategoryId = draft.CategoryId;
             draft.Content = updateDraft.Content;
 
+            var draftStatuse = await _articlesStatusesService.GetDraftStatusAsync();
+
+            if (!draftStatuse.IsSuccess)
+                return ServiceResponse<Articles?>.Fail(default, draftStatuse.Status, draftStatuse.Message);
+
+            draft.StatuseId = draftStatuse.Data.Id;
+
             draft = await _articlesRepository.UpdateAsync(draft);
 
             return ServiceResponse<Articles?>.Success(draft, message: "Draft has updated");
@@ -106,6 +113,29 @@ namespace Keeper_ContentService.Services.Implementations
                 return ServiceResponse<Articles?>.Fail(default, message: "You aren't owner of this draft.");
 
             var statuse = await _articlesStatusesService.GetReviewStatusAsync();
+
+            if (!statuse.IsSuccess)
+                return ServiceResponse<Articles?>.Fail(default, statuse.Status, statuse.Message);
+
+            draft.StatuseId = statuse.Data.Id;
+
+            draft = await _articlesRepository.UpdateAsync(draft);
+
+            return ServiceResponse<Articles?>.Success(draft);
+        }
+
+
+        public async Task<ServiceResponse<Articles?>> MarkAsUnReviewAsync(Guid userId, Guid draftId)
+        {
+            Articles? draft = await _articlesRepository.GetByIdAsync(draftId);
+
+            if (draft == null)
+                return ServiceResponse<Articles?>.Fail(default, 404, "Draft doesn't exist.");
+
+            if (draft.UserId != userId)
+                return ServiceResponse<Articles?>.Fail(default, message: "You aren't owner of this draft.");
+
+            var statuse = await _articlesStatusesService.GetDraftStatusAsync();
 
             if (!statuse.IsSuccess)
                 return ServiceResponse<Articles?>.Fail(default, statuse.Status, statuse.Message);
