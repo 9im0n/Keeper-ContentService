@@ -148,6 +148,28 @@ namespace Keeper_ContentService.Services.Implementations
         }
 
 
+        public async Task<ServiceResponse<Articles?>> MarkAsReadyForPublishAsync(string role ,Guid draftId)
+        {
+            Articles? draft = await _articlesRepository.GetByIdAsync(draftId);
+
+            if (draft == null)
+                return ServiceResponse<Articles?>.Fail(default, 404, "Draft doesn't exist.");
+
+            if (role != "Moderator" && role != "Admin")
+                return ServiceResponse<Articles?>.Fail(default, 403, "You don't have requred permissions.");
+
+            var readyForPublisStatuse = await _articlesStatusesService.GetReadyForPublisStatusAsync();
+
+            if (!readyForPublisStatuse.IsSuccess)
+                return ServiceResponse<Articles?>.Fail(default, readyForPublisStatuse.Status, readyForPublisStatuse.Message);
+
+            draft.StatuseId = readyForPublisStatuse.Data.Id;
+            draft = await _articlesRepository.UpdateAsync(draft);
+
+            return ServiceResponse<Articles?>.Success(draft);
+        } 
+
+
         public async Task<ServiceResponse<Articles?>> PublicateDraft(Guid userId, Guid draftId)
         {
             Articles? draft = await _articlesRepository.GetByIdAsync(draftId);
