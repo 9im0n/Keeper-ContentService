@@ -6,6 +6,7 @@ using Keeper_ContentService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
 
 namespace Keeper_ContentService.Controllers
 {
@@ -169,6 +170,28 @@ namespace Keeper_ContentService.Controllers
             try
             {
                 ServiceResponse<Articles?> response = await _articleService.MarkAsUnReviewAsync(userId, id);
+
+                if (!response.IsSuccess)
+                    return StatusCode(statusCode: response.Status, new { message = response.Message });
+
+                return Ok(new { data = response.Data, message = response.Message });
+            }
+            catch (Exception ex)
+            {
+                return Problem(statusCode: 500, detail: $"Content Service: {ex.Message}\n{ex.InnerException}");
+            }
+        }
+
+
+        [Authorize]
+        [HttpPost("{draftId:guid}/readyForPublish")]
+        public async Task<IActionResult> ReadyForPublish(Guid draftId)
+        {
+            string role = User.FindFirst(ClaimTypes.Role).Value;
+
+            try
+            {
+                ServiceResponse<Articles?> response = await _articleService.MarkAsReadyForPublishAsync(role, draftId);
 
                 if (!response.IsSuccess)
                     return StatusCode(statusCode: response.Status, new { message = response.Message });
