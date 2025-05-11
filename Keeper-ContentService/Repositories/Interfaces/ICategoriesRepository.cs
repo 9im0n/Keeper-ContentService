@@ -2,8 +2,8 @@
 
 namespace Keeper_ContentService.Repositories.Interfaces
 {
-    public interface ICategoriesRepository : IBaseRepository<Categories>
+    public interface ICategoriesRepository : IBaseRepository<Category>
     {
-        public Task<Categories?> GetByNameAsync(string name);
+        public Task<Category?> GetByNameAsync(string name);
     }
 }

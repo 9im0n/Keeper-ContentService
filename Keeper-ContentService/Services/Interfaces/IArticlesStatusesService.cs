@@ -5,10 +5,10 @@ namespace Keeper_ContentService.Services.Interfaces
 {
     public interface IArticlesStatusesService
     {
-        public Task<ServiceResponse<ArticleStatuses?>> GetByIdAsync(Guid Id);
-        public Task<ServiceResponse<ArticleStatuses?>> GetReviewStatusAsync();
-        public Task<ServiceResponse<ArticleStatuses?>> GetDraftStatusAsync();
-        public Task<ServiceResponse<ArticleStatuses?>> GetPublishedStatusAsync();
-        public Task<ServiceResponse<ArticleStatuses?>> GetReadyForPublisStatusAsync();
+        public Task<ServiceResponse<ArticleStatus?>> GetByIdAsync(Guid Id);
+        public Task<ServiceResponse<ArticleStatus?>> GetReviewStatusAsync();
+        public Task<ServiceResponse<ArticleStatus?>> GetDraftStatusAsync();
+        public Task<ServiceResponse<ArticleStatus?>> GetPublishedStatusAsync();
+        public Task<ServiceResponse<ArticleStatus?>> GetReadyForPublisStatusAsync();
     }
 }

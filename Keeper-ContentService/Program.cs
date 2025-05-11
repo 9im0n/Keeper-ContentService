@@ -8,6 +8,7 @@ using Keeper_ContentService.Repositories.Interfaces;
 using Keeper_ContentService.Repositories.Implementations;
 using Keeper_ContentService.Services.Interfaces;
 using Keeper_ContentService.Services.Implementations;
+using Keeper_ContentService.Middlewares;
 
 namespace Keeper_ContentService
 {
@@ -62,6 +63,9 @@ namespace Keeper_ContentService
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            // Middlewares
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
