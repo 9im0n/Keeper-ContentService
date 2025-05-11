@@ -13,6 +13,6 @@ namespace Keeper_ContentService.Models.Db
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public Guid ArticlesId { get; set; }
+        public Guid ArticleId { get; set; }
     }
 }
