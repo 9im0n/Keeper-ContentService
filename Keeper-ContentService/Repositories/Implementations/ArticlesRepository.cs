@@ -1,34 +1,54 @@
 ﻿using Keeper_ContentService.DB;
 using Keeper_ContentService.Models.Db;
+using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Repositories.Interfaces;
+using Keeper_ContentService.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keeper_ContentService.Repositories.Implementations
 {
-    public class ArticlesRepository : BaseRepository<Articles>, IArticlesRepository
+    public class ArticlesRepository : BaseRepository<Article>, IArticlesRepository
     {
-        public ArticlesRepository(AppDbContext context) : base(context) { }
+        private IDTOMapperService _mapper;
 
-        public override async Task<ICollection<Articles>> GetAllAsync()
+        public ArticlesRepository(AppDbContext context, IDTOMapperService mapper) : base(context)
         {
-            return await _appDbContext.Articles.Include(a => a.Statuse).Include(a => a.Category)
-                .ToListAsync();
+            _mapper = mapper;
         }
 
-        public override async Task<Articles?> GetByIdAsync(Guid id)
+        public async Task<PagedResultDTO<ArticleDTO>> GetPagedArticlesAsync(PagedRequestDTO<ArticlesFillterDTO> request)
         {
-            return await _appDbContext.Articles.Include(a => a.Statuse).Include(a => a.Category)
-                .FirstOrDefaultAsync(a => a.Id == id);
-        }
+            IQueryable<Article> query = _appDbContext.Articles;
 
-        public async Task<ICollection<Articles>> GetByUserIdAsync(Guid userId)
-        {
-            return await _appDbContext.Articles.Where(a => a.UserId == userId).ToListAsync();
-        }
+            query = query.Include(a => a.Category).Include(a => a.Comments).Include(a => a.Status);
 
-        public async Task<ICollection<Articles>> GetByCategoryIdAsync(Guid categoryId)
-        {
-            return await _appDbContext.Articles.Where(a => a.Category.Id == categoryId).ToListAsync();
+            if (!string.IsNullOrEmpty(request.Filter?.Category))
+                query = query.Where(a => a.Category.Name == request.Filter.Category);
+
+            if (!string.IsNullOrEmpty(request.Search))
+                query = query.Where(a => a.Title.Contains(request.Search));
+
+            int totalCount = await query.CountAsync();
+
+            bool isDescending = request.Direction.ToLower() == "desc";
+
+            query = request.Sort.ToLower() switch
+            {
+                "id" => isDescending ? query.OrderByDescending(a => a.Id) : query.OrderBy(a => a.Id),
+                "title" => isDescending ? query.OrderByDescending(a => a.Title) : query.OrderBy(a => a.Title),
+                "publicationdate" => isDescending ? query.OrderByDescending(a => a.PublicationDate) : query.OrderBy(a => a.PublicationDate),
+                _ => isDescending ? query.OrderByDescending(a => a.Id) : query.OrderBy(a => a.Id)
+            };
+
+            query = query.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize);
+
+            List<ArticleDTO> articlesDTOs = _mapper.Map(await query.ToListAsync()).ToList();
+
+            return new PagedResultDTO<ArticleDTO>()
+            {
+                Items = articlesDTOs,
+                TotalCount = totalCount
+            };
         }
     }
 }

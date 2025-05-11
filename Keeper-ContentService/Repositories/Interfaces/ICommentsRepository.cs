@@ -2,9 +2,9 @@
 
 namespace Keeper_ContentService.Repositories.Interfaces
 {
-    public interface ICommentsRepository : IBaseRepository<Comments>
+    public interface ICommentsRepository : IBaseRepository<Comment>
     {
-        public Task<ICollection<Comments>> GetByUserId(Guid userId);
-        public Task<ICollection<Comments>> GetByArticleId(Guid articleId);
+        public Task<ICollection<Comment>> GetByUserId(Guid userId);
+        public Task<ICollection<Comment>> GetByArticleId(Guid articleId);
     }
 }

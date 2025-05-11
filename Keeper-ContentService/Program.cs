@@ -54,6 +54,7 @@ namespace Keeper_ContentService
 
             // Services
 
+            builder.Services.AddScoped<IDTOMapperService, DTOMapperService>();
             builder.Services.AddScoped<IArticleService, ArticleService>();
             builder.Services.AddScoped<IArticlesStatusesService, ArticleStatusesService>();
 

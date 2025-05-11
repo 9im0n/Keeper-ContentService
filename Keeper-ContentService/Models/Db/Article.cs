@@ -15,6 +15,8 @@ namespace Keeper_ContentService.Models.Db
 
         public string Content { get; set; } = null!;
 
+        public DateTime PublicationDate { get; set; }
+
         public ICollection<Comment> Comments { get; set; } = null!;
 
         public Guid AuthorId { get; set; }

@@ -21,7 +21,8 @@ namespace Keeper_ContentService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPagedArticles([FromQuery] PagedRequestDTO<ArticlesFillterDTO> pagedRequestDTO)
         {
-            throw new NotImplementedException();
+            ServiceResponse<PagedResultDTO<ArticleDTO>> response = await _articleService.GetPagedAsync(pagedRequestDTO);
+            return HandleServiceResponse(response);
         }
 
         [HttpGet("{id:guid}")]
