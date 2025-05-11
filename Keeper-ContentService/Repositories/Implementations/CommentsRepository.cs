@@ -5,17 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keeper_ContentService.Repositories.Implementations
 {
-    public class CommentsRepository : BaseRepository<Comments>, ICommentsRepository
+    public class CommentsRepository : BaseRepository<Comment>, ICommentsRepository
     {
         public CommentsRepository(AppDbContext context) : base(context) { }
 
-        public async Task<ICollection<Comments>> GetByUserId(Guid userId)
+        public async Task<ICollection<Comment>> GetByUserId(Guid userId)
         {
-            return await _appDbContext.Comments.Where(c => c.UserId == userId).ToListAsync();
+            return await _appDbContext.Comments.Where(c => c.AuthorId == userId).ToListAsync();
         }
 
 
-        public async Task<ICollection<Comments>> GetByArticleId(Guid articleId)
+        public async Task<ICollection<Comment>> GetByArticleId(Guid articleId)
         {
             return await _appDbContext.Comments.Where(c => c.ArticleId == articleId).ToListAsync();
         }

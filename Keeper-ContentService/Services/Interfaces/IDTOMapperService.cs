@@ -3,7 +3,7 @@ using Keeper_ContentService.Models.DTO;
 
 namespace Keeper_ContentService.Services.Interfaces
 {
-    public interface IDTOMapper
+    public interface IDTOMapperService
     {
         // Single
         public CategoryDTO Map(Category category);

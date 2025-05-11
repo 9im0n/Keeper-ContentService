@@ -4,7 +4,7 @@ using Keeper_ContentService.Services.Interfaces;
 
 namespace Keeper_ContentService.Services.Implementations
 {
-    public class DTOMapperService : IDTOMapper
+    public class DTOMapperService : IDTOMapperService
     {
         public CategoryDTO Map(Category category)
         {

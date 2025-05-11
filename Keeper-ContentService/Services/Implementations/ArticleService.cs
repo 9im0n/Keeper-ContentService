@@ -17,5 +17,12 @@ namespace Keeper_ContentService.Services.Implementations
             _articlesRepository = articlesRepository;
             _articlesStatusesService = articlesStatusesService;
         }
+
+        public async Task<ServiceResponse<PagedResultDTO<ArticleDTO>>> GetPagedAsync(
+            PagedRequestDTO<ArticlesFillterDTO> pagedRequestDTO)
+        {
+            PagedResultDTO<ArticleDTO> pagedResultDTO = await _articlesRepository.GetPagedArticlesAsync(pagedRequestDTO);
+            return ServiceResponse<PagedResultDTO<ArticleDTO>>.Success(pagedResultDTO);
+        }
     }
 }

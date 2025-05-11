@@ -1,10 +1,10 @@
 ﻿using Keeper_ContentService.Models.Db;
+using Keeper_ContentService.Models.DTO;
 
 namespace Keeper_ContentService.Repositories.Interfaces
 {
-    public interface IArticlesRepository : IBaseRepository<Articles>
+    public interface IArticlesRepository : IBaseRepository<Article>
     {
-        public Task<ICollection<Articles>> GetByUserIdAsync(Guid userId);
-        public Task<ICollection<Articles>> GetByCategoryIdAsync(Guid categoryId);
+        public Task<PagedResultDTO<ArticleDTO>> GetPagedArticlesAsync(PagedRequestDTO<ArticlesFillterDTO> request);
     }
 }
