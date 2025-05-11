@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keeper_ContentService.Repositories.Implementations
 {
-    public class CategoriesRepository : BaseRepository<Categories>, ICategoriesRepository
+    public class CategoriesRepository : BaseRepository<Category>, ICategoriesRepository
     {
         public CategoriesRepository(AppDbContext context) : base(context) { }
 
-        public async Task<Categories?> GetByNameAsync(string name)
+        public async Task<Category?> GetByNameAsync(string name)
         {
             return await _appDbContext.Categories.FirstOrDefaultAsync(c => c.Name == name);
         }

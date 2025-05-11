@@ -1,19 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Keeper_ContentService.Models.Db
 {
-    public class LikedArticles : BaseModel
+    [Table("SavedArticles")]
+    public class SavedArticle : BaseModel
     {
-        [Required]
-        public Guid ArticlesId { get; set; }
+        public Article Article { get; set; } = null!;
 
-        [JsonIgnore]
-        public virtual Articles Article { get; set; }
-
-        [Required]
         public Guid UserId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public Guid ArticleId { get; set; }
     }
 }

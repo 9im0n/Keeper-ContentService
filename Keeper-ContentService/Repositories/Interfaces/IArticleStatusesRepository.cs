@@ -2,8 +2,8 @@
 
 namespace Keeper_ContentService.Repositories.Interfaces
 {
-    public interface IArticleStatusesRepository : IBaseRepository<ArticleStatuses>
+    public interface IArticleStatusesRepository : IBaseRepository<ArticleStatus>
     {
-        public Task<ArticleStatuses?> GetByNameAsync(string name);
+        public Task<ArticleStatus?> GetByNameAsync(string name);
     }
 }

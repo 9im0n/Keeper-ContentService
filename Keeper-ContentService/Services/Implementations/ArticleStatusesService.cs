@@ -15,58 +15,58 @@ namespace Keeper_ContentService.Services.Implementations
         }
 
 
-        public async Task<ServiceResponse<ArticleStatuses?>> GetByIdAsync(Guid Id)
+        public async Task<ServiceResponse<ArticleStatus?>> GetByIdAsync(Guid Id)
         {
-            ArticleStatuses? statuse = await _repository.GetByIdAsync(Id);
+            ArticleStatus? statuse = await _repository.GetByIdAsync(Id);
 
             if (statuse == null)
-                return ServiceResponse<ArticleStatuses?>.Fail(default, 404, "Statuse doesn't exist");
+                return ServiceResponse<ArticleStatus?>.Fail(default, 404, "Statuse doesn't exist");
 
-            return ServiceResponse<ArticleStatuses?>.Success(statuse);
+            return ServiceResponse<ArticleStatus?>.Success(statuse);
         }
 
 
-        public async Task<ServiceResponse<ArticleStatuses?>> GetReviewStatusAsync()
+        public async Task<ServiceResponse<ArticleStatus?>> GetReviewStatusAsync()
         {
-            ArticleStatuses? statuse = await _repository.GetByNameAsync("review");
+            ArticleStatus? statuse = await _repository.GetByNameAsync("review");
 
             if (statuse == null)
-                return ServiceResponse<ArticleStatuses?>.Fail(default, 404, "Statuse doesn't exist");
+                return ServiceResponse<ArticleStatus?>.Fail(default, 404, "Statuse doesn't exist");
 
-            return ServiceResponse<ArticleStatuses?>.Success(statuse);
+            return ServiceResponse<ArticleStatus?>.Success(statuse);
         }
 
 
-        public async Task<ServiceResponse<ArticleStatuses?>> GetDraftStatusAsync()
+        public async Task<ServiceResponse<ArticleStatus?>> GetDraftStatusAsync()
         {
-            ArticleStatuses? statuse = await _repository.GetByNameAsync("draft");
+            ArticleStatus? statuse = await _repository.GetByNameAsync("draft");
 
             if (statuse == null)
-                return ServiceResponse<ArticleStatuses?>.Fail(default, 404, "Statuse doesn't exist");
+                return ServiceResponse<ArticleStatus?>.Fail(default, 404, "Statuse doesn't exist");
 
-            return ServiceResponse<ArticleStatuses?>.Success(statuse);
+            return ServiceResponse<ArticleStatus?>.Success(statuse);
         }
 
 
-        public async Task<ServiceResponse<ArticleStatuses?>> GetPublishedStatusAsync()
+        public async Task<ServiceResponse<ArticleStatus?>> GetPublishedStatusAsync()
         {
-            ArticleStatuses? statuse = await _repository.GetByNameAsync("published");
+            ArticleStatus? statuse = await _repository.GetByNameAsync("published");
 
             if (statuse == null)
-                return ServiceResponse<ArticleStatuses?>.Fail(default, 404, "Statuse doesn't exist");
+                return ServiceResponse<ArticleStatus?>.Fail(default, 404, "Statuse doesn't exist");
 
-            return ServiceResponse<ArticleStatuses?>.Success(statuse);
+            return ServiceResponse<ArticleStatus?>.Success(statuse);
         }
 
 
-        public async Task<ServiceResponse<ArticleStatuses?>> GetReadyForPublisStatusAsync()
+        public async Task<ServiceResponse<ArticleStatus?>> GetReadyForPublisStatusAsync()
         {
-            ArticleStatuses? statuse = await _repository.GetByNameAsync("readyForPublish");
+            ArticleStatus? statuse = await _repository.GetByNameAsync("readyForPublish");
 
             if (statuse == null)
-                return ServiceResponse<ArticleStatuses?>.Fail(default, 404, "Statuse doesn't exist");
+                return ServiceResponse<ArticleStatus?>.Fail(default, 404, "Statuse doesn't exist");
 
-            return ServiceResponse<ArticleStatuses?>.Success(statuse);
+            return ServiceResponse<ArticleStatus?>.Success(statuse);
         }
     }
 }
