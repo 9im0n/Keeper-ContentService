@@ -28,7 +28,7 @@ namespace Keeper_ContentService.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            ServiceResponse<ArticleDTO?> resppnse = await _articleService.GetById(id);
+            ServiceResponse<ArticleDTO?> resppnse = await _articleService.GetByIdAsync(id);
             return HandleServiceResponse(resppnse);
         }
 
@@ -51,9 +51,10 @@ namespace Keeper_ContentService.Controllers
 
         [Authorize]
         [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteArticle(Guid articleId)
+        public async Task<IActionResult> DeleteArticle(Guid id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<object?> response = await _articleService.DeleteAsync(id, User);
+            return HandleServiceResponse(response);
         }
 
         private IActionResult HandleServiceResponse<T>(ServiceResponse<T> response)

@@ -8,7 +8,7 @@ namespace Keeper_ContentService.Services.Interfaces
     public interface IArticleService
     {
         public Task<ServiceResponse<PagedResultDTO<ArticleDTO>>> GetPagedAsync(PagedRequestDTO<ArticlesFillterDTO> pagedRequestDTO);
-        public Task<ServiceResponse<ArticleDTO?>> GetById(Guid id);
+        public Task<ServiceResponse<ArticleDTO?>> GetByIdAsync(Guid id);
 
         public Task<ServiceResponse<ArticleDTO?>> CreateDraftAsync(CreateDraftDTO createDraftDTO, 
             ClaimsPrincipal User);
@@ -16,5 +16,7 @@ namespace Keeper_ContentService.Services.Interfaces
         public Task<ServiceResponse<ArticleDTO?>> UpdateArticleAsync(Guid id, 
             UpdateArticleDTO updateArticleDTO,
             ClaimsPrincipal User);
+
+        public Task<ServiceResponse<object?>> DeleteAsync(Guid id, ClaimsPrincipal User);
     }
 }
