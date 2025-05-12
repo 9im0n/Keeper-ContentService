@@ -15,7 +15,7 @@ namespace Keeper_ContentService.Models.Db
 
         public string Content { get; set; } = null!;
 
-        public DateTime PublicationDate { get; set; }
+        public DateTime PublicationDate { get; set; } = DateTime.UtcNow;
 
         public ICollection<Comment> Comments { get; set; } = null!;
 

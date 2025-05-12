@@ -9,10 +9,7 @@ namespace Keeper_ContentService.Models.DTO
         public string Title { get; set; } = null!;
 
         [Required]
-        public CategoryDTO Category { get; set; } = null!;
-
-        [Required]
-        public Guid AuthorId { get; set; }
+        public Guid CategoryId { get; set; }
 
         [Required]
         [MaxLength(10000)]

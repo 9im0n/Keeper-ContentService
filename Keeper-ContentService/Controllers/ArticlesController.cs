@@ -26,9 +26,9 @@ namespace Keeper_ContentService.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById(Guid articleId)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            ServiceResponse<ArticleDTO?> resppnse = await _articleService.GetById(articleId);
+            ServiceResponse<ArticleDTO?> resppnse = await _articleService.GetById(id);
             return HandleServiceResponse(resppnse);
         }
 
@@ -36,7 +36,8 @@ namespace Keeper_ContentService.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateDraft([FromBody] CreateDraftDTO createDraftDTO)
         {
-            throw new NotImplementedException();
+            ServiceResponse<ArticleDTO?> response = await _articleService.CreateDraftAsync(createDraftDTO, User);
+            return HandleServiceResponse(response);
         }
 
         [Authorize]

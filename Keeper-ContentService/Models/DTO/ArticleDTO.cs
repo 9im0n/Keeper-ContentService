@@ -8,6 +8,7 @@
         public Guid AuthorId { get; set; }
         public ArticleStatusDTO Satus { get; set; } = null!;
         public string Content { get; set; } = null!;
+        public DateTime PublicationDate { get; set; }
         public ICollection<CommentDTO> Comments { get; set; } = null!;
     }
 }
