@@ -46,6 +46,7 @@ namespace Keeper_ContentService.Services.Implementations
                 Satus = Map(article.Status),
                 Title = article.Title,
                 Content = article.Content,
+                PublicationDate = article.PublicationDate,
             };
         }
 

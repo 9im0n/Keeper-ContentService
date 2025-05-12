@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Keeper_ContentService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250310173623_Init")]
-    partial class Init
+    [Migration("20250512063541_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,42 @@ namespace Keeper_ContentService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.ArticleStatuses", b =>
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.Article", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ArticleStatusId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleStatusId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Articles");
+                });
+
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.ArticleStatus", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,43 +75,7 @@ namespace Keeper_ContentService.Migrations
                     b.ToTable("ArticleStatuses");
                 });
 
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.Articles", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CategoryId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(7000)
-                        .HasColumnType("character varying(7000)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("StatuseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("StatuseId");
-
-                    b.ToTable("Articles");
-                });
-
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.Categories", b =>
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,7 +90,7 @@ namespace Keeper_ContentService.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.Comments", b =>
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.Comment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -100,27 +99,25 @@ namespace Keeper_ContentService.Migrations
                     b.Property<Guid>("ArticleId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("PerantId")
+                    b.Property<Guid>("AuthorId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid?>("CommentId")
+                        .HasColumnType("uuid");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("ParentCommentId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ArticleId");
+
+                    b.HasIndex("ParentCommentId");
 
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.Favorites", b =>
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.LikedArticle", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -132,20 +129,23 @@ namespace Keeper_ContentService.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ArticleId");
 
-                    b.ToTable("Favorites");
+                    b.ToTable("LikedArticles");
                 });
 
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.LikedArticles", b =>
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.SavedArticle", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ArticlesId")
+                    b.Property<Guid>("ArticleId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -156,33 +156,50 @@ namespace Keeper_ContentService.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ArticlesId");
+                    b.HasIndex("ArticleId");
 
-                    b.ToTable("Likes");
+                    b.ToTable("SavedArticles");
                 });
 
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.Articles", b =>
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.Article", b =>
                 {
-                    b.HasOne("Keeper_ContentService.Models.Db.Categories", "Category")
+                    b.HasOne("Keeper_ContentService.Models.Db.ArticleStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("ArticleStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Keeper_ContentService.Models.Db.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Keeper_ContentService.Models.Db.ArticleStatuses", "Statuse")
-                        .WithMany()
-                        .HasForeignKey("StatuseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
 
-                    b.Navigation("Statuse");
+                    b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.Comments", b =>
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.Comment", b =>
                 {
-                    b.HasOne("Keeper_ContentService.Models.Db.Articles", "Article")
+                    b.HasOne("Keeper_ContentService.Models.Db.Article", "Article")
+                        .WithMany("Comments")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Keeper_ContentService.Models.Db.Comment", "ParentComment")
+                        .WithMany()
+                        .HasForeignKey("ParentCommentId");
+
+                    b.Navigation("Article");
+
+                    b.Navigation("ParentComment");
+                });
+
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.LikedArticle", b =>
+                {
+                    b.HasOne("Keeper_ContentService.Models.Db.Article", "Article")
                         .WithMany()
                         .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -191,9 +208,9 @@ namespace Keeper_ContentService.Migrations
                     b.Navigation("Article");
                 });
 
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.Favorites", b =>
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.SavedArticle", b =>
                 {
-                    b.HasOne("Keeper_ContentService.Models.Db.Articles", "Article")
+                    b.HasOne("Keeper_ContentService.Models.Db.Article", "Article")
                         .WithMany()
                         .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -202,15 +219,9 @@ namespace Keeper_ContentService.Migrations
                     b.Navigation("Article");
                 });
 
-            modelBuilder.Entity("Keeper_ContentService.Models.Db.LikedArticles", b =>
+            modelBuilder.Entity("Keeper_ContentService.Models.Db.Article", b =>
                 {
-                    b.HasOne("Keeper_ContentService.Models.Db.Articles", "Article")
-                        .WithMany()
-                        .HasForeignKey("ArticlesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Article");
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }
