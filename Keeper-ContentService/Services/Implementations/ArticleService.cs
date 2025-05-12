@@ -25,12 +25,14 @@ namespace Keeper_ContentService.Services.Implementations
             _categoryService = categoryService;
         }
 
+
         public async Task<ServiceResponse<PagedResultDTO<ArticleDTO>>> GetPagedAsync(
             PagedRequestDTO<ArticlesFillterDTO> pagedRequestDTO)
         {
             PagedResultDTO<ArticleDTO> pagedResultDTO = await _articlesRepository.GetPagedArticlesAsync(pagedRequestDTO);
             return ServiceResponse<PagedResultDTO<ArticleDTO>>.Success(pagedResultDTO);
         }
+
 
         public async Task<ServiceResponse<ArticleDTO?>> GetById(Guid id)
         {
@@ -42,6 +44,7 @@ namespace Keeper_ContentService.Services.Implementations
             ArticleDTO articleDTO = _mapper.Map(article);
             return ServiceResponse<ArticleDTO?>.Success(articleDTO);
         }
+
 
         public async Task<ServiceResponse<ArticleDTO?>> CreateDraftAsync(CreateDraftDTO createDraftDTO, 
             ClaimsPrincipal User)
@@ -76,6 +79,36 @@ namespace Keeper_ContentService.Services.Implementations
             ArticleDTO articleDTO = _mapper.Map(newArticle);
 
             return ServiceResponse<ArticleDTO?>.Success(articleDTO, 201);
+        }
+
+
+        public async Task<ServiceResponse<ArticleDTO?>> UpdateArticleAsync(Guid id, 
+            UpdateArticleDTO updateArticleDTO,
+            ClaimsPrincipal User)
+        {
+            if (!Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return ServiceResponse<ArticleDTO?>.Fail(default, 401, "User Unauthorized.");
+
+            Article? article = await _articlesRepository.GetByIdAsync(id);
+
+            if (article == null)
+                return ServiceResponse<ArticleDTO?>.Fail(default, 404, "Article doesn't exist.");
+
+            if (article.AuthorId != userId)
+                return ServiceResponse<ArticleDTO?>.Fail(default, 403, "You don't have permission to change this article.");
+
+            article.Title = updateArticleDTO.Title;
+            article.CategoryId = updateArticleDTO.CategoryId;
+            article.Content = updateArticleDTO.Content;
+            article.UpdatedAt = DateTime.UtcNow;
+
+            await _articlesRepository.UpdateAsync(article);
+
+            article = await _articlesRepository.GetByIdAsync(id);
+
+            ArticleDTO articleDTO = _mapper.Map(article);
+
+            return ServiceResponse<ArticleDTO?>.Success(articleDTO);
         }
     }
 }

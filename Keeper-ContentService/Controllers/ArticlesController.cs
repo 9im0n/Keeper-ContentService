@@ -42,9 +42,11 @@ namespace Keeper_ContentService.Controllers
 
         [Authorize]
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateArticle(Guid articleId, [FromBody] UpdateArticleDTO updateArticleDTO)
+        public async Task<IActionResult> UpdateArticle(Guid id, [FromBody] UpdateArticleDTO updateArticleDTO)
         {
-            throw new NotImplementedException();
+            ServiceResponse<ArticleDTO?> response = await _articleService
+                .UpdateArticleAsync(id, updateArticleDTO, User);
+            return HandleServiceResponse(response);
         }
 
         [Authorize]
