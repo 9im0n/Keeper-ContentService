@@ -3,6 +3,7 @@ using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
 using Keeper_ContentService.Repositories.Interfaces;
 using Keeper_ContentService.Services.Interfaces;
+using System.Runtime.InteropServices.ObjectiveC;
 using System.Security.Claims;
 
 namespace Keeper_ContentService.Services.Implementations
@@ -34,7 +35,7 @@ namespace Keeper_ContentService.Services.Implementations
         }
 
 
-        public async Task<ServiceResponse<ArticleDTO?>> GetById(Guid id)
+        public async Task<ServiceResponse<ArticleDTO?>> GetByIdAsync(Guid id)
         {
             Article? article = await _articlesRepository.GetByIdAsync(id);
 
@@ -109,6 +110,25 @@ namespace Keeper_ContentService.Services.Implementations
             ArticleDTO articleDTO = _mapper.Map(article);
 
             return ServiceResponse<ArticleDTO?>.Success(articleDTO);
+        }
+
+
+        public async Task<ServiceResponse<object?>> DeleteAsync(Guid id, ClaimsPrincipal User)
+        {
+            if (!Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return ServiceResponse<object?>.Fail(default, 401, "User Unauthorized");
+
+            Article? article = await _articlesRepository.GetByIdAsync(id);
+
+            if (article == null)
+                return ServiceResponse<object?>.Fail(default, 404, "Article doesn't exist.");
+
+            if (article.AuthorId != userId)
+                return ServiceResponse<object?>.Fail(default, 403, "You don't have permission to delete this article.");
+
+            await _articlesRepository.DeleteAsync(id);
+
+            return ServiceResponse<object?>.Success(null);
         }
     }
 }
