@@ -7,5 +7,6 @@ namespace Keeper_ContentService.Services.Interfaces
     public interface IArticleService
     {
         public Task<ServiceResponse<PagedResultDTO<ArticleDTO>>> GetPagedAsync(PagedRequestDTO<ArticlesFillterDTO> pagedRequestDTO);
+        public Task<ServiceResponse<ArticleDTO?>> GetById(Guid id);
     }
 }

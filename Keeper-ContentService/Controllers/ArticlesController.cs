@@ -28,7 +28,8 @@ namespace Keeper_ContentService.Controllers
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid articleId)
         {
-            throw new NotImplementedException();
+            ServiceResponse<ArticleDTO?> resppnse = await _articleService.GetById(articleId);
+            return HandleServiceResponse(resppnse);
         }
 
         [Authorize]

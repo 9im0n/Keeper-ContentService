@@ -20,7 +20,7 @@ namespace Keeper_ContentService.Repositories.Implementations
         {
             IQueryable<Article> query = _appDbContext.Articles;
 
-            query = query.Include(a => a.Category).Include(a => a.Comments).Include(a => a.Status);
+            query = query.Include(a => a.Category).Include(a => a.Status);
 
             if (!string.IsNullOrEmpty(request.Filter?.Category))
                 query = query.Where(a => a.Category.Name == request.Filter.Category);
@@ -49,6 +49,12 @@ namespace Keeper_ContentService.Repositories.Implementations
                 Items = articlesDTOs,
                 TotalCount = totalCount
             };
+        }
+
+        public async override Task<Article?> GetByIdAsync(Guid id)
+        {
+            return await _appDbContext.Articles.Include(a => a.Category)
+                .Include(a => a.Status).FirstOrDefaultAsync(a => a.Id == id);
         }
     }
 }
