@@ -47,6 +47,8 @@ namespace Keeper_ContentService.Services.Implementations
                 Title = article.Title,
                 Content = article.Content,
                 PublicationDate = article.PublicationDate,
+                CreatedAt = article.CreatedAt,
+                UpdatedAt = article.UpdatedAt
             };
         }
 
