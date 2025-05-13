@@ -2,6 +2,6 @@
 {
     public class CommentsFilterDTO
     {
-        public Guid? ArticleId { get; set; }
+        public Guid? AuthorId { get; set; }
     }
 }
