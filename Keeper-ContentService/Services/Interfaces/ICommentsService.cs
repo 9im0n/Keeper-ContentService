@@ -11,5 +11,7 @@ namespace Keeper_ContentService.Services.Interfaces
 
         public Task<ServiceResponse<CommentDTO?>> CreateAsync(Guid articleId,
             CreateCommentDTO createCommentDTO, ClaimsPrincipal User);
+
+        public Task<ServiceResponse<object?>> DeleteAsync(Guid articleId, Guid commentId, ClaimsPrincipal User);
     }
 }

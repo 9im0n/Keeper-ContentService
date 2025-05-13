@@ -43,7 +43,8 @@ namespace Keeper_ContentService.Controllers
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteComment(Guid articleId, Guid id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<object?> response = await _commentsService.DeleteAsync(articleId, id, User);
+            return HandleServiceResponse(response);
         }
 
 
