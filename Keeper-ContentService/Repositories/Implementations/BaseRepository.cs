@@ -27,7 +27,7 @@ namespace Keeper_ContentService.Repositories.Implementations
         }
 
 
-        public async Task<T?> CreateAsync(T entity)
+        public async Task<T> CreateAsync(T entity)
         {
             EntityEntry<T> obj = await _appDbContext.Set<T>().AddAsync(entity);
             await _appDbContext.SaveChangesAsync();

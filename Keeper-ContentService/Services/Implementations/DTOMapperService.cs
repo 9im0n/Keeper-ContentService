@@ -31,7 +31,7 @@ namespace Keeper_ContentService.Services.Implementations
                 Id = comment.Id,
                 ArticleId = comment.ArticleId,
                 AuthorId = comment.AuthorId,
-                ParentCommentId = comment.CommentId,
+                ParentCommentId = comment.ParentCommentId,
                 Text = comment.Text,
             };
         }

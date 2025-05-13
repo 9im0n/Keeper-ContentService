@@ -42,7 +42,9 @@ namespace Keeper_ContentService.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
-                    PublicationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PublicationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
                     CategoryId = table.Column<Guid>(type: "uuid", nullable: false),
                     ArticleStatusId = table.Column<Guid>(type: "uuid", nullable: false)
@@ -69,10 +71,10 @@ namespace Keeper_ContentService.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ParentCommentId = table.Column<Guid>(type: "uuid", nullable: true),
                     AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ArticleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CommentId = table.Column<Guid>(type: "uuid", nullable: true)
+                    ParentCommentId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
