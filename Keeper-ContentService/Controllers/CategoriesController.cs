@@ -6,29 +6,29 @@ using Microsoft.AspNetCore.Mvc;
 namespace Keeper_ContentService.Controllers
 {
     [ApiController]
-    [Route("article-statuses")]
-    public class ArticleStatusesController : ControllerBase
+    [Route("categories")]
+    public class CategoriesController : ControllerBase
     {
-        private readonly IArticlesStatusesService _service;
+        private readonly ICategoriesService _service;
 
-        public ArticleStatusesController(IArticlesStatusesService service)
+        public CategoriesController(ICategoriesService service)
         {
             _service = service;
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAllArticleStatuses()
+        public async Task<IActionResult> GetAll()
         {
-            ServiceResponse<ICollection<ArticleStatusDTO>> response = await _service.GetAllAsync();
+            ServiceResponse<ICollection<CategoryDTO>> response = await _service.GetAllAsync();
             return HandleServiceResponse(response);
         }
 
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetArticleStatusById(Guid id)
+        public async Task<IActionResult> GetCategoryById(Guid id)
         {
-            ServiceResponse<ArticleStatusDTO?> response = await _service.GetByIdAsync(id);
+            ServiceResponse<CategoryDTO?> response = await _service.GetByIdAsync(id);
             return HandleServiceResponse(response);
         }
 

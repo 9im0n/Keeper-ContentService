@@ -77,3 +77,13 @@ Accept: application/json
 
 GET {{api}}/article-statuses/d6ee7cad-a2ca-4008-9289-634c596f4df2
 Accept: application/json
+
+###
+
+GET {{api}}/categories
+Accept: application/json
+
+###
+
+GET {{api}}/categories/12c64621-41a3-44f8-87f8-c939b8d47c90
+Accept: application/json
