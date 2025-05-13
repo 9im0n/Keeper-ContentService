@@ -6,6 +6,7 @@ namespace Keeper_ContentService.Services.Interfaces
 {
     public interface IArticlesStatusesService
     {
+        public Task<ServiceResponse<ICollection<ArticleStatusDTO>>> GetAllAsync();
         public Task<ServiceResponse<ArticleStatusDTO?>> GetByIdAsync(Guid Id);
         public Task<ServiceResponse<ArticleStatusDTO?>> GetReviewStatusAsync();
         public Task<ServiceResponse<ArticleStatusDTO?>> GetDraftStatusAsync();
