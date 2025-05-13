@@ -65,5 +65,30 @@ namespace Keeper_ContentService.Services.Implementations
 
             return ServiceResponse<CommentDTO?>.Success(commentDTO);
         }
+
+
+        public async Task<ServiceResponse<object?>> DeleteAsync(Guid articleId, Guid commentId, ClaimsPrincipal User)
+        {
+            if (!Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return ServiceResponse<object?>.Fail(default, 401, "User Unauthorized.");
+
+            ServiceResponse<ArticleDTO?> articleServiceResponse = await _articleService.GetByIdAsync(articleId);
+
+            if (!articleServiceResponse.IsSuccess)
+                return ServiceResponse<object?>.Fail(default,
+                    articleServiceResponse.Status, articleServiceResponse.Message);
+
+            Comment? comment = await _repository.GetByIdAsync(articleId);
+
+            if (comment == null)
+                return ServiceResponse<object?>.Fail(default, 404, "Comment doesn't exist");
+
+            if (comment.AuthorId != userId)
+                return ServiceResponse<object?>.Fail(default, 403, "You don't have permmision to delete this comment.");
+            
+            await _repository.DeleteAsync(commentId);
+
+            return ServiceResponse<object?>.Success(default);
+        }
     }
 }
