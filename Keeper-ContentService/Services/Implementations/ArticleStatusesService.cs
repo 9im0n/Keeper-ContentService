@@ -17,6 +17,14 @@ namespace Keeper_ContentService.Services.Implementations
             _repository = repository;
             _mapper = mapper;
         }
+        
+
+        public async Task<ServiceResponse<ICollection<ArticleStatusDTO>>> GetAllAsync()
+        {
+            ICollection<ArticleStatus> articleStatuses = await _repository.GetAllAsync();
+            ICollection<ArticleStatusDTO> articleStatusDTOs = _mapper.Map(articleStatuses);
+            return ServiceResponse<ICollection<ArticleStatusDTO>>.Success(articleStatusDTOs);
+        }
 
 
         public async Task<ServiceResponse<ArticleStatusDTO?>> GetByIdAsync(Guid Id)

@@ -67,3 +67,13 @@ DELETE {{api}}/articles/{{articleId}}/comments/0196c866-8e41-772f-a967-680417dfc
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
+
+###
+
+GET {{api}}/article-statuses
+Accept: application/json
+
+###
+
+GET {{api}}/article-statuses/d6ee7cad-a2ca-4008-9289-634c596f4df2
+Accept: application/json
