@@ -1,12 +1,13 @@
 @api = http://localhost:5003
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjMyOGVkZDg4LWNmMzktNDliMi1hODkxLTVmMTIxMGI1MmYzNyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NDcwNzEyMTksImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQ2xpZW50In0.SBEVCF1Si4eSlndepSgYjBws2IF8gpGc9Q1oKJwvDWE
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjMyOGVkZDg4LWNmMzktNDliMi1hODkxLTVmMTIxMGI1MmYzNyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NDcxMTY4NDIsImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQ2xpZW50In0.5GIRFpD327KfWIVZuUYDiQZL8gTQldRis0_2IkpT55A
+@articleId = 0196c82c-961c-7ecb-9743-11b1ed88beaf
 
 GET {{api}}/articles
 Accept: application/json
 
 ###
 
-GET {{api}}/articles/0196c344-25ff-7e07-b134-f9e779e9b95d
+GET {{api}}/articles/{{articleId}}
 Accept: application/json
 
 ###
@@ -24,7 +25,7 @@ Authorization: Bearer {{jwt}}
 
 ###
 
-PUT {{api}}/articles/0196c413-3b08-769b-9eea-efc8cdf7e25a
+PUT {{api}}/articles/{{articleId}}
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
@@ -37,7 +38,13 @@ Authorization: Bearer {{jwt}}
 
 ###
 
-DELETE {{api}}/articles/0196c413-3b08-769b-9eea-efc8cdf7e25a
+DELETE {{api}}/articles/{{articleId}}
 Accept: application/json
 Content-Type: application/json
 Authorization: Bearer {{jwt}}
+
+###
+
+GET {{api}}/articles/{{articleId}}/comments
+Accept: application/json
+Content-Type: application/json

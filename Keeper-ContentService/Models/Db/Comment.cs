@@ -15,6 +15,8 @@ namespace Keeper_ContentService.Models.Db
 
         public Guid AuthorId { get; set; }
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
         public Guid ArticleId { get; set; }
         public Guid? CommentId { get; set; }
     }
