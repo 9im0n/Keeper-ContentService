@@ -1,6 +1,6 @@
 @api = http://localhost:5003
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjMyOGVkZDg4LWNmMzktNDliMi1hODkxLTVmMTIxMGI1MmYzNyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NDcxMTY4NDIsImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQ2xpZW50In0.5GIRFpD327KfWIVZuUYDiQZL8gTQldRis0_2IkpT55A
-@articleId = 0196c82c-961c-7ecb-9743-11b1ed88beaf
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjMyOGVkZDg4LWNmMzktNDliMi1hODkxLTVmMTIxMGI1MmYzNyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NDcxMTkzNDEsImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQ2xpZW50In0.kbocSxRQMgVfxDpvgNuNhndFQnDDnjb14AqnJJLN7UM
+@articleId = 0196c863-5f76-7747-a52f-9a0a0f6631ee
 
 GET {{api}}/articles
 Accept: application/json
@@ -19,7 +19,7 @@ Authorization: Bearer {{jwt}}
 
 {
   "title": "AAAAAAAAAA",
-  "categoryId": "9701bdae-b5b7-40cd-9c36-48553d082807",
+  "categoryId": "12c64621-41a3-44f8-87f8-c939b8d47c90",
   "content": "BBBBBBBBBBBBBBBBB"
 }
 
@@ -32,8 +32,8 @@ Authorization: Bearer {{jwt}}
 
 {
   "title": "CCCCCCCCC",
-  "categoryId": "0661ae86-152a-4bd6-be93-5b8cf94c15f1",
-  "content": "This Article is about Art."
+  "categoryId": "2591557b-5353-4bcb-b95c-df79b331e993",
+  "content": "This Article is about Programming."
 }
 
 ###
@@ -48,3 +48,15 @@ Authorization: Bearer {{jwt}}
 GET {{api}}/articles/{{articleId}}/comments
 Accept: application/json
 Content-Type: application/json
+
+###
+
+POST {{api}}/articles/{{articleId}}/comments
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "text": "Это первый комментарий!",
+  "parentCommentId": null
+}

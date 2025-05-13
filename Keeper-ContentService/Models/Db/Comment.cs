@@ -7,7 +7,7 @@ namespace Keeper_ContentService.Models.Db
     [Table("Comments")]
     public class Comment : BaseModel
     {
-        public string Text = null!;
+        public string Text { get; set; } = null!;
 
         public Article Article { get; set; } = null!;
 
@@ -18,6 +18,6 @@ namespace Keeper_ContentService.Models.Db
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Guid ArticleId { get; set; }
-        public Guid? CommentId { get; set; }
+        public Guid? ParentCommentId { get; set; }
     }
 }

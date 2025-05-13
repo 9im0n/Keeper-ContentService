@@ -8,12 +8,6 @@ namespace Keeper_ContentService.Models.DTO
         [MaxLength(500)]
         public string Text { get; set; } = null!;
 
-        [Required]
-        public Guid AuthorId { get; set; }
-
-        [Required]
-        public Guid ArticleId { get; set; }
-
-        public Guid? ParentCommentId { get; set; }
+        public Guid? ParentCommentId { get; set; } = null;
     }
 }

@@ -22,7 +22,7 @@ namespace Keeper_ContentService.Controllers
         public async Task<IActionResult> GetPagedComments(Guid articleId, 
             [FromQuery] PagedRequestDTO<CommentsFilterDTO> pagedRequestDTO)
         {
-            ServiceResponse<PagedResultDTO<CommentDTO>> response = await _commentsService
+            ServiceResponse<PagedResultDTO<CommentDTO>?> response = await _commentsService
                 .GetPagedAsync(articleId, pagedRequestDTO);
             return HandleServiceResponse(response);
         }
@@ -30,9 +30,12 @@ namespace Keeper_ContentService.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateComment(Guid articleId, CreateCommentDTO createCommentDTO)
+        public async Task<IActionResult> CreateComment(Guid articleId, 
+            [FromBody] CreateCommentDTO createCommentDTO)
         {
-            throw new NotImplementedException();
+            ServiceResponse<CommentDTO?> response = await _commentsService.CreateAsync(articleId, 
+                createCommentDTO, User);
+            return HandleServiceResponse(response);
         }
 
 

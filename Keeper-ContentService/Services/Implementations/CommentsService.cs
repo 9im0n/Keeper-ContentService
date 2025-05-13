@@ -1,23 +1,69 @@
-﻿using Keeper_ContentService.Models.DTO;
+﻿using Keeper_ContentService.Models.Db;
+using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
 using Keeper_ContentService.Repositories.Interfaces;
 using Keeper_ContentService.Services.Interfaces;
+using System.Security.Claims;
 
 namespace Keeper_ContentService.Services.Implementations
 {
     public class CommentsService : ICommentsService
     {
         private readonly ICommentsRepository _repository;
+        private readonly IArticleService _articleService;
+        private readonly IDTOMapperService _mapper;
 
-        public CommentsService(ICommentsRepository repository)
+        public CommentsService(
+            ICommentsRepository repository, 
+            IArticleService articleService,
+            IDTOMapperService mapper)
         {
             _repository = repository;
+            _articleService = articleService;
+            _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<PagedResultDTO<CommentDTO>>> GetPagedAsync(Guid articleId, PagedRequestDTO<CommentsFilterDTO> pagedRequestDTO)
+        public async Task<ServiceResponse<PagedResultDTO<CommentDTO>?>> GetPagedAsync(
+            Guid articleId, 
+            PagedRequestDTO<CommentsFilterDTO> pagedRequestDTO)
         {
-            PagedResultDTO<CommentDTO> commentDTOs = await _repository.GetPagedCommentsAsync(articleId, pagedRequestDTO);
-            return ServiceResponse<PagedResultDTO<CommentDTO>>.Success(commentDTOs);
+            ServiceResponse<ArticleDTO?> serviceResponse = await _articleService.GetByIdAsync(articleId);
+
+            if (!serviceResponse.IsSuccess)
+                return ServiceResponse<PagedResultDTO<CommentDTO>?>.Fail(default, serviceResponse.Status, serviceResponse.Message);
+
+            PagedResultDTO <CommentDTO> commentDTOs = await _repository.GetPagedCommentsAsync(articleId, pagedRequestDTO);
+            return ServiceResponse<PagedResultDTO<CommentDTO>?>.Success(commentDTOs);
+        }
+
+
+        public async Task<ServiceResponse<CommentDTO?>> CreateAsync(
+            Guid articleId, 
+            CreateCommentDTO createCommentDTO, 
+            ClaimsPrincipal User)
+        {
+            if (!Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return ServiceResponse<CommentDTO?>.Fail(default, 401, "User Unauthorized.");
+
+            ServiceResponse<ArticleDTO?> articleServiceResponse = await _articleService.GetByIdAsync(articleId);
+
+            if (!articleServiceResponse.IsSuccess)
+                return ServiceResponse<CommentDTO?>.Fail(default, 
+                    articleServiceResponse.Status, articleServiceResponse.Message);
+
+            Comment? newComment = new Comment()
+            {
+                Text = createCommentDTO.Text,
+                AuthorId = userId,
+                ArticleId = articleId,
+                ParentCommentId = createCommentDTO.ParentCommentId
+            };
+
+            newComment = await _repository.CreateAsync(newComment);
+
+            CommentDTO commentDTO = _mapper.Map(newComment);
+
+            return ServiceResponse<CommentDTO?>.Success(commentDTO);
         }
     }
 }

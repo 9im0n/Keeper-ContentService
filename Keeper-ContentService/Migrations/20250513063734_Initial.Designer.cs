@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Keeper_ContentService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250513053828_UpdatedComments")]
-    partial class UpdatedComments
+    [Migration("20250513063734_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,9 +106,6 @@ namespace Keeper_ContentService.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("AuthorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CommentId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")

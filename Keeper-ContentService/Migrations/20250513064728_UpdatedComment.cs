@@ -1,29 +1,28 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Keeper_ContentService.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedComments : Migration
+    public partial class UpdatedComment : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "CreatedAt",
+            migrationBuilder.AddColumn<string>(
+                name: "Text",
                 table: "Comments",
-                type: "timestamp with time zone",
+                type: "text",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "CreatedAt",
+                name: "Text",
                 table: "Comments");
         }
     }
