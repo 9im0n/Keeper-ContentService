@@ -21,7 +21,7 @@ namespace Keeper_ContentService.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> 
+        public async Task<IActionResult>
             GetPagedLikedArticles([FromQuery] PagedRequestDTO<LikedArticlesFillterDTO> request)
         {
             ServiceResponse<PagedResultDTO<LikedArticleDTO>?> response = await _service.GetPaginationAsync(request, User);
@@ -34,6 +34,15 @@ namespace Keeper_ContentService.Controllers
         public async Task<IActionResult> LikeArticle(Guid id)
         {
             ServiceResponse<object?> response = await _service.LikeArticleAsync(id, User);
+            return HandleServiceResponse(response);
+        }
+
+
+        [HttpDelete("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteLike(Guid id)
+        {
+            ServiceResponse<object?> response = await _service.DeleteLikeAsync(id, User);
             return HandleServiceResponse(response);
         }
 

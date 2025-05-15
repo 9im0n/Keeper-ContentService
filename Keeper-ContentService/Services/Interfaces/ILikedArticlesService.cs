@@ -10,5 +10,6 @@ namespace Keeper_ContentService.Services.Interfaces
             GetPaginationAsync(PagedRequestDTO<LikedArticlesFillterDTO> request, ClaimsPrincipal User);
 
         public Task<ServiceResponse<object?>> LikeArticleAsync(Guid articleId, ClaimsPrincipal User);
+        public Task<ServiceResponse<object?>> DeleteLikeAsync(Guid articleId, ClaimsPrincipal User);
     }
 }

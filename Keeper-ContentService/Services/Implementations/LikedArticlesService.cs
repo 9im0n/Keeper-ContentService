@@ -62,5 +62,21 @@ namespace Keeper_ContentService.Services.Implementations
 
             return ServiceResponse<object?>.Success(default);
         }
+
+
+        public async Task<ServiceResponse<object?>> DeleteLikeAsync(Guid articleId, ClaimsPrincipal User)
+        {
+            if (!Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return ServiceResponse<object?>.Fail(default, 401, "User unauthorized");
+
+            LikedArticle? liked = await _repository.GetByUserAndArticleId(userId, articleId);
+
+            if (liked == null)
+                return ServiceResponse<object?>.Fail(default, 404, "Liked article doesn't exist.");
+
+            await _repository.DeleteAsync(liked.Id);
+
+            return ServiceResponse<object?>.Success(default);
+        }
     }
 }
