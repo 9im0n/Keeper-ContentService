@@ -29,6 +29,14 @@ namespace Keeper_ContentService.Controllers
         }
 
 
+        [HttpPost("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> LikeArticle(Guid id)
+        {
+            ServiceResponse<object?> response = await _service.LikeArticleAsync(id, User);
+            return HandleServiceResponse(response);
+        }
+
         private IActionResult HandleServiceResponse<T>(ServiceResponse<T> response)
         {
             if (!response.IsSuccess)

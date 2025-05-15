@@ -94,3 +94,9 @@ Accept: application/json
 GET {{api}}/liked-articles?Filter.userId={{userId}}
 Accept: application/json
 Authorization: Bearer {{jwt}}
+
+###
+
+POST {{api}}/liked-articles/0196c863-5f76-7747-a52f-9a0a0f6631ee
+Accept: application/json
+Authorization: Bearer {{jwt}}

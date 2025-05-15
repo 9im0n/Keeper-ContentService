@@ -1,4 +1,5 @@
-﻿using Keeper_ContentService.Models.DTO;
+﻿using Keeper_ContentService.Models.Db;
+using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
 using Keeper_ContentService.Repositories.Interfaces;
 using Keeper_ContentService.Services.Interfaces;
@@ -38,6 +39,28 @@ namespace Keeper_ContentService.Services.Implementations
             PagedResultDTO<LikedArticleDTO> response = await _repository.GetPagedLikedArticlesAsync(request);
 
             return ServiceResponse<PagedResultDTO<LikedArticleDTO>?>.Success(response);
+        }
+
+
+        public async Task<ServiceResponse<object?>> LikeArticleAsync(Guid articleId, ClaimsPrincipal User)
+        {
+            if (!Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return ServiceResponse<object?>.Fail(default, 401, "User unauthorized");
+
+            LikedArticle? liked = await _repository.GetByUserAndArticleId(userId, articleId);
+
+            if (liked != null)
+                return ServiceResponse<object?>.Fail(default, 409, "You liked it before.");
+
+            LikedArticle newLikedarticle = new LikedArticle()
+            {
+                ArticleId = articleId,
+                UserId = userId,
+            };
+
+            newLikedarticle = await _repository.CreateAsync(newLikedarticle);
+
+            return ServiceResponse<object?>.Success(default);
         }
     }
 }

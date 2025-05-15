@@ -8,5 +8,7 @@ namespace Keeper_ContentService.Services.Interfaces
     {
         public Task<ServiceResponse<PagedResultDTO<LikedArticleDTO>?>>
             GetPaginationAsync(PagedRequestDTO<LikedArticlesFillterDTO> request, ClaimsPrincipal User);
+
+        public Task<ServiceResponse<object?>> LikeArticleAsync(Guid articleId, ClaimsPrincipal User);
     }
 }
