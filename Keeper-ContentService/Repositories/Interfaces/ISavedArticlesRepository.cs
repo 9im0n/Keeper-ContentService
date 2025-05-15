@@ -8,5 +8,6 @@ namespace Keeper_ContentService.Repositories.Interfaces
         public Task<PagedResultDTO<SavedArticleDTO>>
             GetPagedLikedArticlesAsync(PagedRequestDTO<SavedArticlesFillterDTO> request);
 
+        public Task<SavedArticle?> GetByUserAndArticleIdAsync(Guid userId, Guid articleId);
     }
 }
