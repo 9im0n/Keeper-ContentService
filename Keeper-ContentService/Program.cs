@@ -51,6 +51,7 @@ namespace Keeper_ContentService
             builder.Services.AddScoped<IArticleStatusesRepository, ArticleStatusesRepository>();
             builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
             builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
+            builder.Services.AddScoped<ILikedArticlesRepository, LikedArticlesRepository>();
 
             // Services
 
@@ -59,6 +60,7 @@ namespace Keeper_ContentService
             builder.Services.AddScoped<IArticlesStatusesService, ArticleStatusesService>();
             builder.Services.AddScoped<ICategoriesService, CategoriesService>();
             builder.Services.AddScoped<ICommentsService, CommentsService>();
+            builder.Services.AddScoped<ILikedArticlesService, LikedArticlesService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

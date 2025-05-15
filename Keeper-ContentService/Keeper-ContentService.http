@@ -1,6 +1,7 @@
 @api = http://localhost:5003
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjMyOGVkZDg4LWNmMzktNDliMi1hODkxLTVmMTIxMGI1MmYzNyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NDcxMjE0ODQsImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQ2xpZW50In0.9BqtAWaWlebvMEQ6a77bwntG-m_T65xMJmgqZjshDds
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjMyOGVkZDg4LWNmMzktNDliMi1hODkxLTVmMTIxMGI1MmYzNyIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NDcyOTg1NjQsImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQ2xpZW50In0.QxZCSQVlAz98ba9qNynJxSxZn44afGyvkdCqoKUpmnI
 @articleId = 0196c863-5f76-7747-a52f-9a0a0f6631ee
+@userId = 328edd88-cf39-49b2-a891-5f1210b52f37
 
 GET {{api}}/articles
 Accept: application/json
@@ -87,3 +88,9 @@ Accept: application/json
 
 GET {{api}}/categories/12c64621-41a3-44f8-87f8-c939b8d47c90
 Accept: application/json
+
+###
+
+GET {{api}}/liked-articles?Filter.userId={{userId}}
+Accept: application/json
+Authorization: Bearer {{jwt}}
