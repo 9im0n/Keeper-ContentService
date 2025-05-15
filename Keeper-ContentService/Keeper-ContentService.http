@@ -112,3 +112,9 @@ Authorization: Bearer {{jwt}}
 GET {{api}}/saved-articles?Filter.userId={{userId}}
 Accept: application/json
 Authorization: Bearer {{jwt}}
+
+###
+
+POST {{api}}/saved-articles/{{articleId}}
+Accept: application/json
+Authorization: Bearer {{jwt}}
