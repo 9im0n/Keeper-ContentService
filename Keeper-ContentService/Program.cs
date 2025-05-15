@@ -14,8 +14,6 @@ using Keeper_ContentService.Repositories.UserArticleActionRepository.Implementat
 using Keeper_ContentService.Repositories.ArticleRepository.Interfaces;
 using Keeper_ContentService.Repositories.ArticleRepository.Implementations;
 using Keeper_ContentService.Repositories.UserArticleActionRepository.Interfaces;
-using Keeper_ContentService.Models.Db;
-using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Services.ArticleService.Implementations;
 using Keeper_ContentService.Services.ArticleStatusService.Interfaces;
 using Keeper_ContentService.Services.ArticleStatusService.Implementations;
@@ -70,8 +68,8 @@ namespace Keeper_ContentService
             builder.Services.AddScoped<IArticleStatusesRepository, ArticleStatusRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
-            builder.Services.AddScoped<IUserArticleActionRepository<LikedArticle, LikedArticleDTO, LikedArticlesFillterDTO>, LikedArticlesRepository>();
-            builder.Services.AddScoped<IUserArticleActionRepository<SavedArticle, SavedArticleDTO, SavedArticlesFillterDTO>, SavedArticlesRepository>();
+            builder.Services.AddScoped<ILikedArticlesRepository, LikedArticlesRepository>();
+            builder.Services.AddScoped<ISavedArticlesRepository, SavedArticlesRepository>();
 
             // Services
 

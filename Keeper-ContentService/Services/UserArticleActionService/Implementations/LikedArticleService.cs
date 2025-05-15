@@ -12,12 +12,12 @@ namespace Keeper_ContentService.Services.UserArticleActionService.Implementation
     public class LikedArticleService : ILikedArticleService
     {
         private readonly IArticleService _articleService;
-        private readonly IUserArticleActionRepository<LikedArticle, LikedArticleDTO, LikedArticlesFillterDTO> _repository;
+        private readonly ILikedArticlesRepository _repository;
         private readonly ILogger<LikedArticleService> _logger;
 
         public LikedArticleService(
             IArticleService articleService,
-            IUserArticleActionRepository<LikedArticle, LikedArticleDTO, LikedArticlesFillterDTO> repository,
+            ILikedArticlesRepository repository,
             ILogger<LikedArticleService> logger)
         {
             _articleService = articleService;

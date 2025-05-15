@@ -10,7 +10,7 @@ namespace Keeper_ContentService.Repositories.UserArticleActionRepository.Impleme
 {
     public class SavedArticlesRepository : 
         BaseRepository<SavedArticle>,
-        IUserArticleActionRepository<SavedArticle, SavedArticleDTO, SavedArticlesFillterDTO>
+        ISavedArticlesRepository
     {
         private readonly IDTOMapperService _mapper;
 

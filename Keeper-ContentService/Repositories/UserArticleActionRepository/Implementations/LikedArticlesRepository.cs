@@ -10,7 +10,7 @@ namespace Keeper_ContentService.Repositories.UserArticleActionRepository.Impleme
 {
     public class LikedArticlesRepository : 
         BaseRepository<LikedArticle>, 
-        IUserArticleActionRepository<LikedArticle, LikedArticleDTO, LikedArticlesFillterDTO>
+        ILikedArticlesRepository
     {
         private readonly IDTOMapperService _mapper;
 

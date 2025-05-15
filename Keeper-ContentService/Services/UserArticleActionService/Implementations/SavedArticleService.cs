@@ -10,11 +10,11 @@ namespace Keeper_ContentService.Services.UserArticleActionService.Implementation
 {
     public class SavedArticleService : ISavedArticleService
     {
-        private readonly IUserArticleActionRepository<SavedArticle, SavedArticleDTO, SavedArticlesFillterDTO> _repository;
+        private readonly ISavedArticlesRepository _repository;
         private readonly IArticleService _articleService;
 
         public SavedArticleService(
-            IUserArticleActionRepository<SavedArticle, SavedArticleDTO, SavedArticlesFillterDTO> repository,
+            ISavedArticlesRepository repository,
             IArticleService articleService)
         {
             _repository = repository;
