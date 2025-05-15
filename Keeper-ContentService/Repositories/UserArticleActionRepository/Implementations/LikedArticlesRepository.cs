@@ -1,0 +1,59 @@
+﻿using Keeper_ContentService.DB;
+using Keeper_ContentService.Models.Db;
+using Keeper_ContentService.Models.DTO;
+using Keeper_ContentService.Repositories.BaseRepository.Implementations;
+using Keeper_ContentService.Repositories.UserArticleActionRepository.Interfaces;
+using Keeper_ContentService.Services.DTOMapperService.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace Keeper_ContentService.Repositories.UserArticleActionRepository.Implementations
+{
+    public class LikedArticlesRepository : 
+        BaseRepository<LikedArticle>, 
+        IUserArticleActionRepository<LikedArticle, LikedArticleDTO, LikedArticlesFillterDTO>
+    {
+        private readonly IDTOMapperService _mapper;
+
+        public LikedArticlesRepository(AppDbContext context, IDTOMapperService mapper) : base(context)
+        {
+            _mapper = mapper;
+        }
+
+
+        public async Task<PagedResultDTO<LikedArticleDTO>>
+            GetPagedAsync(PagedRequestDTO<LikedArticlesFillterDTO> request)
+        {
+            IQueryable<LikedArticle> query = _appDbContext.Likes;
+
+            if (request.Filter?.UserId != null)
+                query = query.Where(l => l.UserId == request.Filter.UserId);
+
+            int totalCount = await query.CountAsync();
+
+            bool isDescending = request.Direction.ToLower() == "desc";
+
+            query = request.Sort.ToLower() switch
+            {
+                "id" => isDescending ? query.OrderByDescending(l => l.Id) : query.OrderBy(l => l.Id),
+                "createdat" => isDescending ? query.OrderByDescending(l => l.CreatedAt) : query.OrderBy(l => l.CreatedAt),
+                _ => isDescending ? query.OrderByDescending(l => l.Id) : query.OrderBy(l => l.Id)
+            };
+
+            query = query.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize);
+
+            List<LikedArticleDTO> likedArticleDTOs = _mapper.Map(await query.ToListAsync()).ToList();
+
+            return new PagedResultDTO<LikedArticleDTO>()
+            {
+                Items = likedArticleDTOs,
+                TotalCount = totalCount
+            };
+        }
+
+
+        public async Task<LikedArticle?> GetByUserAndArticleIdAsync(Guid userId, Guid articleId)
+        {
+            return await _appDbContext.Likes.FirstOrDefaultAsync(l => l.UserId == userId && l.ArticleId == articleId);
+        }
+    }
+}

@@ -1,6 +1,6 @@
 ﻿using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
-using Keeper_ContentService.Services.Interfaces;
+using Keeper_ContentService.Services.UserArticleActionService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +9,10 @@ namespace Keeper_ContentService.Controllers
     [Route("saved-articles")]
     public class SavedArticlesController : Controller
     {
-        private readonly ISavedArticlesService _service;
+        private readonly ISavedArticleService _service;
 
         public SavedArticlesController(
-            ISavedArticlesService service
+            ISavedArticleService service
             )
         {
             _service = service;
@@ -32,7 +32,7 @@ namespace Keeper_ContentService.Controllers
         [Authorize]
         public async Task<IActionResult> SaveArticle(Guid id)
         {
-            ServiceResponse<object?> response = await _service.SaveArticle(id, User);
+            ServiceResponse<object?> response = await _service.AddAsync(id, User);
             return HandleServiceResponse(response);
         }
 
@@ -41,7 +41,7 @@ namespace Keeper_ContentService.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteSavedArticle(Guid id)
         {
-            ServiceResponse<object?> response = await _service.DeleteFromSaved(id, User);
+            ServiceResponse<object?> response = await _service.RemoveAsync(id, User);
             return HandleServiceResponse(response);
         }
 

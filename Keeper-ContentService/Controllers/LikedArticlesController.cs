@@ -1,6 +1,6 @@
 ﻿using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
-using Keeper_ContentService.Services.Interfaces;
+using Keeper_ContentService.Services.UserArticleActionService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +10,9 @@ namespace Keeper_ContentService.Controllers
     [Route("liked-articles")]
     public class LikedArticlesController : ControllerBase
     {
-        private ILikedArticlesService _service;
+        private ILikedArticleService _service;
 
-        public LikedArticlesController(ILikedArticlesService service)
+        public LikedArticlesController(ILikedArticleService service)
         {
             _service = service;
         }
@@ -33,7 +33,7 @@ namespace Keeper_ContentService.Controllers
         [Authorize]
         public async Task<IActionResult> LikeArticle(Guid id)
         {
-            ServiceResponse<object?> response = await _service.LikeArticleAsync(id, User);
+            ServiceResponse<object?> response = await _service.AddAsync(id, User);
             return HandleServiceResponse(response);
         }
 
@@ -42,7 +42,7 @@ namespace Keeper_ContentService.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteLike(Guid id)
         {
-            ServiceResponse<object?> response = await _service.DeleteLikeAsync(id, User);
+            ServiceResponse<object?> response = await _service.RemoveAsync(id, User);
             return HandleServiceResponse(response);
         }
 

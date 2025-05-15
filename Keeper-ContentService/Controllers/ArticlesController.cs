@@ -1,7 +1,7 @@
 ﻿using Keeper_ContentService.Models.Db;
 using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
-using Keeper_ContentService.Services.Interfaces;
+using Keeper_ContentService.Services.ArticleService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

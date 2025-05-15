@@ -1,6 +1,6 @@
 ﻿using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
-using Keeper_ContentService.Services.Interfaces;
+using Keeper_ContentService.Services.ArticleStatusService.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Keeper_ContentService.Controllers
