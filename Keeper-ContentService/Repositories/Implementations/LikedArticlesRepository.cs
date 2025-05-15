@@ -46,5 +46,11 @@ namespace Keeper_ContentService.Repositories.Implementations
                 TotalCount = totalCount
             };
         }
+
+
+        public async Task<LikedArticle?> GetByUserAndArticleId(Guid userId, Guid articleId)
+        {
+            return await _appDbContext.Likes.FirstOrDefaultAsync(l => l.UserId == userId && l.ArticleId == articleId);
+        }
     }
 }
