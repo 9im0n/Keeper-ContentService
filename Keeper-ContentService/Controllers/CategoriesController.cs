@@ -1,6 +1,6 @@
 ﻿using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
-using Keeper_ContentService.Services.Interfaces;
+using Keeper_ContentService.Services.CategoryService.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Keeper_ContentService.Controllers
@@ -9,9 +9,9 @@ namespace Keeper_ContentService.Controllers
     [Route("categories")]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoriesService _service;
+        private readonly ICategoryReaderService _service;
 
-        public CategoriesController(ICategoriesService service)
+        public CategoriesController(ICategoryReaderService service)
         {
             _service = service;
         }

@@ -1,7 +1,6 @@
 ﻿using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
-using Keeper_ContentService.Repositories.Interfaces;
-using Keeper_ContentService.Services.Interfaces;
+using Keeper_ContentService.Services.CommentService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +10,9 @@ namespace Keeper_ContentService.Controllers
     [Route("articles/{articleId:guid}/comments")]
     public class CommentsController : ControllerBase
     {
-        private readonly ICommentsService _commentsService;
+        private readonly ICommentService _commentsService;
 
-        public CommentsController(ICommentsService commentsService)
+        public CommentsController(ICommentService commentsService)
         {
             _commentsService = commentsService;
         }

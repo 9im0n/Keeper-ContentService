@@ -1,14 +1,33 @@
 using Keeper_ContentService.DB;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Keeper_ContentService.Repositories.Interfaces;
-using Keeper_ContentService.Repositories.Implementations;
-using Keeper_ContentService.Services.Interfaces;
-using Keeper_ContentService.Services.Implementations;
 using Keeper_ContentService.Middlewares;
+using Keeper_ContentService.Repositories.ArticleStatusRepository.Interfaces;
+using Keeper_ContentService.Repositories.ArticleStatusRepository.Implementations;
+using Keeper_ContentService.Repositories.CategoryRepository.Interfaces;
+using Keeper_ContentService.Repositories.CategoryRepository.Implementations;
+using Keeper_ContentService.Repositories.CommentRepository.Interfaces;
+using Keeper_ContentService.Repositories.CommentRepository.Implementations;
+using Keeper_ContentService.Repositories.UserArticleActionRepository.Implementations;
+using Keeper_ContentService.Repositories.ArticleRepository.Interfaces;
+using Keeper_ContentService.Repositories.ArticleRepository.Implementations;
+using Keeper_ContentService.Repositories.UserArticleActionRepository.Interfaces;
+using Keeper_ContentService.Models.Db;
+using Keeper_ContentService.Models.DTO;
+using Keeper_ContentService.Services.ArticleService.Implementations;
+using Keeper_ContentService.Services.ArticleStatusService.Interfaces;
+using Keeper_ContentService.Services.ArticleStatusService.Implementations;
+using Keeper_ContentService.Services.CategoryService.Interfaces;
+using Keeper_ContentService.Services.CategoryService.Implementations;
+using Keeper_ContentService.Services.CommentService.Interfaces;
+using Keeper_ContentService.Services.CommentService.Implementations;
+using Keeper_ContentService.Services.DTOMapperService.Interfaces;
+using Keeper_ContentService.Services.DTOMapperService.Implementations;
+using Keeper_ContentService.Services.UserArticleActionService.Implementations;
+using Keeper_ContentService.Services.ArticleService.Interfaces;
+using Keeper_ContentService.Services.UserArticleActionService.Interfaces;
 
 namespace Keeper_ContentService
 {
@@ -48,21 +67,21 @@ namespace Keeper_ContentService
             // Repositories
 
             builder.Services.AddScoped<IArticlesRepository, ArticlesRepository>();
-            builder.Services.AddScoped<IArticleStatusesRepository, ArticleStatusesRepository>();
-            builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+            builder.Services.AddScoped<IArticleStatusesRepository, ArticleStatusRepository>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICommentsRepository, CommentsRepository>();
-            builder.Services.AddScoped<ILikedArticlesRepository, LikedArticlesRepository>();
-            builder.Services.AddScoped<ISavedArticlesRepository, SavedArticlesRepository>();
+            builder.Services.AddScoped<IUserArticleActionRepository<LikedArticle, LikedArticleDTO, LikedArticlesFillterDTO>, LikedArticlesRepository>();
+            builder.Services.AddScoped<IUserArticleActionRepository<SavedArticle, SavedArticleDTO, SavedArticlesFillterDTO>, SavedArticlesRepository>();
 
             // Services
 
             builder.Services.AddScoped<IDTOMapperService, DTOMapperService>();
             builder.Services.AddScoped<IArticleService, ArticleService>();
-            builder.Services.AddScoped<IArticlesStatusesService, ArticleStatusesService>();
-            builder.Services.AddScoped<ICategoriesService, CategoriesService>();
-            builder.Services.AddScoped<ICommentsService, CommentsService>();
-            builder.Services.AddScoped<ILikedArticlesService, LikedArticlesService>();
-            builder.Services.AddScoped<ISavedArticlesService, SavedArticlesService>();
+            builder.Services.AddScoped<IArticlesStatusesService, ArticleStatusService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<ICommentService, CommentService>();
+            builder.Services.AddScoped<ILikedArticleService, LikedArticleService>();
+            builder.Services.AddScoped<ISavedArticleService, SavedArticleService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
