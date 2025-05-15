@@ -61,5 +61,21 @@ namespace Keeper_ContentService.Services.Implementations
 
             return ServiceResponse<object?>.Success(null);
         }
+
+
+        public async Task<ServiceResponse<object?>> DeleteFromSaved(Guid articleId, ClaimsPrincipal User)
+        {
+            if(!Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+                return ServiceResponse<object?>.Fail(default, 401, "User unauthorized");
+
+            SavedArticle? savedArticle = await _repository.GetByUserAndArticleIdAsync(userId, articleId);
+
+            if (savedArticle == null)
+                return ServiceResponse<object?>.Fail(default, 404, "You didn't save this article.");
+
+            await _repository.DeleteAsync(savedArticle.Id);
+
+            return ServiceResponse<object?>.Success(null);
+        }
     }
 }
