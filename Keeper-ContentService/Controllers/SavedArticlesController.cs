@@ -37,6 +37,14 @@ namespace Keeper_ContentService.Controllers
         }
 
 
+        [HttpDelete("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteSavedArticle(Guid id)
+        {
+            ServiceResponse<object?> response = await _service.DeleteFromSaved(id, User);
+            return HandleServiceResponse(response);
+        }
+
         private IActionResult HandleServiceResponse<T>(ServiceResponse<T> response)
         {
             if (!response.IsSuccess)
