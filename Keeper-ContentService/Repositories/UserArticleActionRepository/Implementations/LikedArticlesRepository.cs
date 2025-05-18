@@ -55,5 +55,10 @@ namespace Keeper_ContentService.Repositories.UserArticleActionRepository.Impleme
         {
             return await _appDbContext.Likes.FirstOrDefaultAsync(l => l.UserId == userId && l.ArticleId == articleId);
         }
+
+        public async Task<ICollection<LikedArticle>> GetBatchedByUserAndArticleId(ICollection<Guid> articleId, Guid userId)
+        {
+            return await _appDbContext.Likes.Where(l => articleId.Contains(l.ArticleId) && l.UserId == userId).ToListAsync();
+        }
     }
 }

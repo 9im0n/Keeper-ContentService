@@ -4,6 +4,7 @@ using Keeper_ContentService.Models.Service;
 using Keeper_ContentService.Services.ArticleService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Keeper_ContentService.Controllers
 {
@@ -21,14 +22,14 @@ namespace Keeper_ContentService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPagedArticles([FromQuery] PagedRequestDTO<ArticlesFillterDTO> pagedRequestDTO)
         {
-            ServiceResponse<PagedResultDTO<ArticleDTO>> response = await _articleService.GetPagedAsync(pagedRequestDTO);
+            ServiceResponse<PagedResultDTO<ArticleDTO>?> response = await _articleService.GetPagedAsync(pagedRequestDTO, User);
             return HandleServiceResponse(response);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GeArticletById(Guid id)
         {
-            ServiceResponse<ArticleDTO?> resppnse = await _articleService.GetByIdAsync(id);
+            ServiceResponse<ArticleDTO?> resppnse = await _articleService.GetByIdAsync(id, User);
             return HandleServiceResponse(resppnse);
         }
 

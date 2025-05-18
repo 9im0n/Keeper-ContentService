@@ -26,6 +26,11 @@ using Keeper_ContentService.Services.DTOMapperService.Implementations;
 using Keeper_ContentService.Services.UserArticleActionService.Implementations;
 using Keeper_ContentService.Services.ArticleService.Interfaces;
 using Keeper_ContentService.Services.UserArticleActionService.Interfaces;
+using Keeper_ContentService.Services.HttpClientService.Interfaces;
+using Keeper_ContentService.Services.HttpClientService.Implementations;
+using Keeper_ContentService.Models.DTO;
+using Keeper_ContentService.Services.ProfileService.Interfaces;
+using Keeper_ContentService.Services.ProfileService.Implementations;
 
 namespace Keeper_ContentService
 {
@@ -36,6 +41,12 @@ namespace Keeper_ContentService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            // HttpClient
+            builder.Services.AddHttpClient<IHttpClientService, HttpClientService>();
+
+            // Configuration
+            builder.Services.Configure<ServiceUrlsDTO>(builder.Configuration.GetSection("ServicUrls"));
 
             // Auth
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -51,7 +62,7 @@ namespace Keeper_ContentService
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
-                            builder.Configuration.GetSection("JwtSettings:IssuerSigningKey").Value
+                            builder.Configuration.GetSection("JwtSettings:IssuerSigningKey").Value!
                             )),
                         ValidAlgorithms = new string[] { SecurityAlgorithms.HmacSha256 },
                     };
@@ -80,6 +91,7 @@ namespace Keeper_ContentService
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<ILikedArticleService, LikedArticleService>();
             builder.Services.AddScoped<ISavedArticleService, SavedArticleService>();
+            builder.Services.AddScoped<IProfileService, ProfileService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

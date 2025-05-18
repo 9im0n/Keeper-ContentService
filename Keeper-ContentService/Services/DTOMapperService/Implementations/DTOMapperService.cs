@@ -36,19 +36,21 @@ namespace Keeper_ContentService.Services.DTOMapperService.Implementations
             };
         }
 
-        public ArticleDTO Map(Article article)
+        public ArticleDTO Map(Article article, bool isLiked, bool isSaved, ProfileDTO profileDTO)
         {
             return new ArticleDTO()
             {
                 Id = article.Id,
                 Category = Map(article.Category),
-                AuthorId = article.AuthorId,
+                Profile = profileDTO,
                 Satus = Map(article.Status),
                 Title = article.Title,
                 Content = article.Content,
                 PublicationDate = article.PublicationDate,
                 CreatedAt = article.CreatedAt,
-                UpdatedAt = article.UpdatedAt
+                UpdatedAt = article.UpdatedAt,
+                IsLiked = isLiked,
+                IsSaved = isSaved,
             };
         }
 
@@ -73,10 +75,43 @@ namespace Keeper_ContentService.Services.DTOMapperService.Implementations
         }
 
         public ICollection<CategoryDTO> Map(ICollection<Category> categories) => categories.Select(Map).ToList();
+        
         public ICollection<ArticleStatusDTO> Map(ICollection<ArticleStatus> articleStatuses) => articleStatuses.Select(Map).ToList();
+        
         public ICollection<CommentDTO> Map(ICollection<Comment> comments) => comments.Select(Map).ToList();
-        public ICollection<ArticleDTO> Map(ICollection<Article> articles) => articles.Select(Map).ToList();
+
+
+        public ICollection<ArticleDTO> Map(
+            ICollection<Article> articles,
+            ICollection<LikedArticle>? likedArticles,
+            ICollection<SavedArticle>? savedArticles,
+            ICollection<ProfileDTO> profileDTOs)
+        {
+            Console.WriteLine(likedArticles == null);
+            Console.WriteLine(savedArticles == null);
+
+            var likedIds = likedArticles?.Select(l => l.ArticleId).ToHashSet() ?? new HashSet<Guid>();
+            var savedIds = savedArticles?.Select(s => s.ArticleId).ToHashSet() ?? new HashSet<Guid>();
+            var profilesMap = profileDTOs.ToDictionary(p => p.Id);
+
+            var articleDTOs = new List<ArticleDTO>();
+
+            foreach (var article in articles)
+            {
+                articleDTOs.Add(Map(
+                    article,
+                    likedIds.Contains(article.Id),
+                    savedIds.Contains(article.Id),
+                    profilesMap[article.AuthorId]
+                ));
+            }
+
+            return articleDTOs;
+        }
+
+
         public ICollection<LikedArticleDTO> Map(ICollection<LikedArticle> likedArticles) => likedArticles.Select(Map).ToList();
+        
         public ICollection<SavedArticleDTO> Map(ICollection<SavedArticle> savedArticles) => savedArticles.Select(Map).ToList();
     }
 }

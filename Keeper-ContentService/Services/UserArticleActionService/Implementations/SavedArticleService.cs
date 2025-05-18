@@ -3,6 +3,7 @@ using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
 using Keeper_ContentService.Repositories.UserArticleActionRepository.Interfaces;
 using Keeper_ContentService.Services.ArticleService.Interfaces;
+using Keeper_ContentService.Services.DTOMapperService.Interfaces;
 using Keeper_ContentService.Services.UserArticleActionService.Interfaces;
 using System.Security.Claims;
 
@@ -12,13 +13,16 @@ namespace Keeper_ContentService.Services.UserArticleActionService.Implementation
     {
         private readonly ISavedArticlesRepository _repository;
         private readonly IArticleService _articleService;
+        private readonly IDTOMapperService _mapper;
 
         public SavedArticleService(
             ISavedArticlesRepository repository,
-            IArticleService articleService)
+            IArticleService articleService,
+            IDTOMapperService mapper)
         {
             _repository = repository;
             _articleService = articleService;
+            _mapper = mapper;
         }
 
         public async Task<ServiceResponse<PagedResultDTO<SavedArticleDTO>?>>

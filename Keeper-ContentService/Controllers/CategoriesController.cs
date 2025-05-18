@@ -18,7 +18,7 @@ namespace Keeper_ContentService.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllCategories()
         {
             ServiceResponse<ICollection<CategoryDTO>> response = await _service.GetAllAsync();
             return HandleServiceResponse(response);
