@@ -7,7 +7,8 @@ namespace Keeper_ContentService.Repositories.UserArticleActionRepository.Interfa
     public interface IUserArticleActionRepository<TEntity, TDto, TFilter> : IBaseRepository<TEntity>
     where TEntity : BaseModel
     {
-        Task<PagedResultDTO<TDto>> GetPagedAsync(PagedRequestDTO<TFilter> request);
-        Task<TEntity?> GetByUserAndArticleIdAsync(Guid userId, Guid articleId);
+        public Task<PagedResultDTO<TDto>> GetPagedAsync(PagedRequestDTO<TFilter> request);
+        public Task<TEntity?> GetByUserAndArticleIdAsync(Guid userId, Guid articleId);
+        public Task<ICollection<TEntity>> GetBatchedByUserAndArticleId(ICollection<Guid> articleIds, Guid userId);
     }
 }

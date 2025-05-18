@@ -10,14 +10,9 @@ namespace Keeper_ContentService.Repositories.ArticleRepository.Implementations
 {
     public class ArticlesRepository : BaseRepository<Article>, IArticlesRepository
     {
-        private IDTOMapperService _mapper;
+        public ArticlesRepository(AppDbContext context, IDTOMapperService mapper) : base(context) { }
 
-        public ArticlesRepository(AppDbContext context, IDTOMapperService mapper) : base(context)
-        {
-            _mapper = mapper;
-        }
-
-        public async Task<PagedResultDTO<ArticleDTO>> GetPagedArticlesAsync(PagedRequestDTO<ArticlesFillterDTO> request)
+        public async Task<PagedResponseDTO<Article>> GetPagedArticlesAsync(PagedRequestDTO<ArticlesFillterDTO> request)
         {
             IQueryable<Article> query = _appDbContext.Articles;
 
@@ -43,12 +38,12 @@ namespace Keeper_ContentService.Repositories.ArticleRepository.Implementations
 
             query = query.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize);
 
-            List<ArticleDTO> articlesDTOs = _mapper.Map(await query.ToListAsync()).ToList();
+            List<Article> articles = await query.ToListAsync();
 
-            return new PagedResultDTO<ArticleDTO>()
+            return new PagedResponseDTO<Article>()
             {
-                Items = articlesDTOs,
-                TotalCount = totalCount
+                Items = articles,
+                TotalCount = totalCount,
             };
         }
 

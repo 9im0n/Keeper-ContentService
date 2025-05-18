@@ -21,7 +21,7 @@ namespace Keeper_ContentService.Controllers
 
         [HttpGet]
         public async Task<IActionResult>
-            GetPagination([FromQuery] PagedRequestDTO<SavedArticlesFillterDTO> request)
+            GetPagedSavedArticles([FromQuery] PagedRequestDTO<SavedArticlesFillterDTO> request)
         {
             ServiceResponse<PagedResultDTO<SavedArticleDTO>?> response = await _service.GetPaginationAsync(request, User);
             return HandleServiceResponse(response);

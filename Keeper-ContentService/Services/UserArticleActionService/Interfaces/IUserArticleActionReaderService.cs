@@ -6,7 +6,7 @@ namespace Keeper_ContentService.Services.UserArticleActionService.Interfaces
 {
     public interface IUserArticleActionReaderService<TDto, TFilter>
     {
-        Task<ServiceResponse<PagedResultDTO<TDto>?>> GetPaginationAsync(
+        public Task<ServiceResponse<PagedResultDTO<TDto>?>> GetPaginationAsync(
             PagedRequestDTO<TFilter> request,
             ClaimsPrincipal user);
     }

@@ -6,6 +6,6 @@ namespace Keeper_ContentService.Repositories.ArticleRepository.Interfaces
 {
     public interface IArticlesRepository : IBaseRepository<Article>
     {
-        public Task<PagedResultDTO<ArticleDTO>> GetPagedArticlesAsync(PagedRequestDTO<ArticlesFillterDTO> request);
+        public Task<PagedResponseDTO<Article>> GetPagedArticlesAsync(PagedRequestDTO<ArticlesFillterDTO> request);
     }
 }

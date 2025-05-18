@@ -2,10 +2,14 @@
 using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Models.Service;
 using Keeper_ContentService.Repositories.ArticleRepository.Interfaces;
+using Keeper_ContentService.Repositories.UserArticleActionRepository.Interfaces;
 using Keeper_ContentService.Services.ArticleService.Interfaces;
 using Keeper_ContentService.Services.ArticleStatusService.Interfaces;
 using Keeper_ContentService.Services.CategoryService.Interfaces;
 using Keeper_ContentService.Services.DTOMapperService.Interfaces;
+using Keeper_ContentService.Services.ProfileService.Interfaces;
+using Keeper_ContentService.Services.UserArticleActionService.Interfaces;
+using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
 namespace Keeper_ContentService.Services.ArticleService.Implementations
@@ -16,35 +20,102 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
         private readonly IArticlesStatusesService _articlesStatusesService;
         private readonly IDTOMapperService _mapper;
         private readonly ICategoryService _categoryService;
+        private readonly IProfileService _profileService;
+        private readonly ILikedArticlesRepository _likedArticlesRepository;
+        private readonly ISavedArticlesRepository _savedArticlesRepository;
+
 
         public ArticleService(IArticlesRepository articlesRepository,
             IArticlesStatusesService articlesStatusesService,
             IDTOMapperService mapper,
-            ICategoryService categoryService)
+            ICategoryService categoryService,
+            IProfileService profileService,
+            ILikedArticlesRepository likedArticlesRepository,
+            ISavedArticlesRepository savedArticlesRepository)
         {
             _articlesRepository = articlesRepository;
             _articlesStatusesService = articlesStatusesService;
             _mapper = mapper;
             _categoryService = categoryService;
+            _profileService = profileService;
+            _likedArticlesRepository = likedArticlesRepository;
+            _savedArticlesRepository = savedArticlesRepository;
         }
 
 
-        public async Task<ServiceResponse<PagedResultDTO<ArticleDTO>>> GetPagedAsync(
-            PagedRequestDTO<ArticlesFillterDTO> pagedRequestDTO)
+        public async Task<ServiceResponse<PagedResultDTO<ArticleDTO>?>> GetPagedAsync(
+            PagedRequestDTO<ArticlesFillterDTO> pagedRequestDTO,
+            ClaimsPrincipal? User = null)
         {
-            PagedResultDTO<ArticleDTO> pagedResultDTO = await _articlesRepository.GetPagedArticlesAsync(pagedRequestDTO);
-            return ServiceResponse<PagedResultDTO<ArticleDTO>>.Success(pagedResultDTO);
+            PagedResponseDTO<Article> pagedResponseDTO = await _articlesRepository.GetPagedArticlesAsync(pagedRequestDTO);
+            
+            BatchedProfileRequestDTO profileIds = new BatchedProfileRequestDTO() 
+            { 
+                profileIds = pagedResponseDTO.Items.Select(a => a.AuthorId).Distinct().ToList() 
+            };
+
+            ServiceResponse<ICollection<ProfileDTO>?> profileDTOs = await _profileService.GetProfilesBatchAsync(profileIds);
+
+            if (!profileDTOs.IsSuccess)
+                return ServiceResponse<PagedResultDTO<ArticleDTO>?>.Fail(default, profileDTOs.Status, profileDTOs.Message);
+
+            ICollection<ArticleDTO> articleDTOs;
+            PagedResultDTO<ArticleDTO> response;
+
+            if (Guid.TryParse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            {
+                ICollection<Guid> articleIds = pagedResponseDTO.Items.Select(a => a.Id).ToList();
+                
+                ICollection<LikedArticle> likedArticles = await _likedArticlesRepository
+                    .GetBatchedByUserAndArticleId(articleIds, userId);
+                ICollection<SavedArticle> savedArticles = await _savedArticlesRepository
+                    .GetBatchedByUserAndArticleId(articleIds, userId);
+
+                articleDTOs = _mapper.Map(pagedResponseDTO.Items, likedArticles, savedArticles, profileDTOs.Data!);
+
+                response = new PagedResultDTO<ArticleDTO>()
+                {
+                    Items = articleDTOs.ToList(),
+                    TotalCount = pagedResponseDTO.TotalCount
+                };
+
+                return ServiceResponse<PagedResultDTO<ArticleDTO>?>.Success(response);
+            }
+
+            articleDTOs = _mapper.Map(pagedResponseDTO.Items, null, null, profileDTOs.Data!);
+
+            response = new PagedResultDTO<ArticleDTO>()
+            {
+                Items = articleDTOs.ToList(),
+                TotalCount = pagedResponseDTO.TotalCount
+            };
+
+            return ServiceResponse<PagedResultDTO<ArticleDTO>?>.Success(response);
         }
 
 
-        public async Task<ServiceResponse<ArticleDTO?>> GetByIdAsync(Guid id)
+        public async Task<ServiceResponse<ArticleDTO?>> GetByIdAsync(Guid id, ClaimsPrincipal? User)
         {
             Article? article = await _articlesRepository.GetByIdAsync(id);
 
             if (article == null)
                 return ServiceResponse<ArticleDTO?>.Fail(default, 404, "Article doesn't exist.");
 
-            ArticleDTO articleDTO = _mapper.Map(article);
+            bool isLiked = false;
+            bool isSaved = false;
+
+            if (Guid.TryParse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            {
+                isLiked = (await _likedArticlesRepository.GetByUserAndArticleIdAsync(userId, article.Id)) == null ? false : true;
+                isSaved = (await _savedArticlesRepository.GetByUserAndArticleIdAsync(userId, article.Id)) == null ? false : true;
+            }
+
+            ServiceResponse<ProfileDTO?> profileServiceResponse = await _profileService.GetProfileByIdAsync(article.AuthorId);
+
+            if (!profileServiceResponse.IsSuccess)
+                return ServiceResponse<ArticleDTO?>.Fail(default, profileServiceResponse.Status, profileServiceResponse.Message);
+
+            ArticleDTO articleDTO = _mapper.Map(article, isLiked, isSaved, profileServiceResponse.Data!);
             return ServiceResponse<ArticleDTO?>.Success(articleDTO);
         }
 
@@ -72,16 +143,19 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
             {
                 Title = createDraftDTO.Title,
                 AuthorId = userId,
-                ArticleStatusId = statuseServiceResponse.Data.Id,
+                ArticleStatusId = statuseServiceResponse.Data!.Id,
                 Content = createDraftDTO.Content,
-                CategoryId = categoryServiceResponse.Data.Id
+                CategoryId = categoryServiceResponse.Data!.Id
             };
 
             newArticle = await _articlesRepository.CreateAsync(newArticle);
 
-            ArticleDTO articleDTO = _mapper.Map(newArticle);
+            ServiceResponse<ArticleDTO?> createdArticle = await GetByIdAsync(newArticle.Id, User);
 
-            return ServiceResponse<ArticleDTO?>.Success(articleDTO, 201);
+            if (!createdArticle.IsSuccess)
+                return ServiceResponse<ArticleDTO?>.Fail(default, createdArticle.Status, createdArticle.Message);
+
+            return ServiceResponse<ArticleDTO?>.Success(createdArticle.Data, 201);
         }
 
 
@@ -107,11 +181,12 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
 
             await _articlesRepository.UpdateAsync(article);
 
-            article = await _articlesRepository.GetByIdAsync(id);
+            ServiceResponse<ArticleDTO?> updatedArticle = await GetByIdAsync(id, User);
 
-            ArticleDTO articleDTO = _mapper.Map(article);
+            if (!updatedArticle.IsSuccess)
+                return ServiceResponse<ArticleDTO?>.Fail(default, updatedArticle.Status, updatedArticle.Message);
 
-            return ServiceResponse<ArticleDTO?>.Success(articleDTO);
+            return ServiceResponse<ArticleDTO?>.Success(updatedArticle.Data);
         }
 
 
