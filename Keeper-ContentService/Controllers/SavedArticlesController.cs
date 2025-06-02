@@ -23,7 +23,7 @@ namespace Keeper_ContentService.Controllers
         public async Task<IActionResult>
             GetPagedSavedArticles([FromQuery] PagedRequestDTO<SavedArticlesFillterDTO> request)
         {
-            ServiceResponse<PagedResultDTO<SavedArticleDTO>?> response = await _service.GetPaginationAsync(request, User);
+            ServiceResponse<PagedResultDTO<ArticleDTO>?> response = await _service.GetPaginationAsync(request, User);
             return HandleServiceResponse(response);
         }
 
@@ -32,7 +32,7 @@ namespace Keeper_ContentService.Controllers
         [Authorize]
         public async Task<IActionResult> SaveArticle(Guid id)
         {
-            ServiceResponse<object?> response = await _service.AddAsync(id, User);
+            ServiceResponse<ArticleDTO?> response = await _service.AddAsync(id, User);
             return HandleServiceResponse(response);
         }
 
@@ -41,7 +41,7 @@ namespace Keeper_ContentService.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteSavedArticle(Guid id)
         {
-            ServiceResponse<object?> response = await _service.RemoveAsync(id, User);
+            ServiceResponse<ArticleDTO?> response = await _service.RemoveAsync(id, User);
             return HandleServiceResponse(response);
         }
 

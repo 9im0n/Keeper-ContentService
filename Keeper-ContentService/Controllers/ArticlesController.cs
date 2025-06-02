@@ -63,7 +63,7 @@ namespace Keeper_ContentService.Controllers
             if (!response.IsSuccess)
                 return StatusCode(response.Status, new { message = response.Message });
 
-            return Ok(new { data = response.Data, message = response.Message });
+            return StatusCode(response.Status ,new { data = response.Data, message = response.Message });
         }
     }
 }

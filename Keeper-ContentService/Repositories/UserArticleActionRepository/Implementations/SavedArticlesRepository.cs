@@ -12,18 +12,15 @@ namespace Keeper_ContentService.Repositories.UserArticleActionRepository.Impleme
         BaseRepository<SavedArticle>,
         ISavedArticlesRepository
     {
-        private readonly IDTOMapperService _mapper;
+        public SavedArticlesRepository(AppDbContext context) : base(context) { }
 
-        public SavedArticlesRepository(AppDbContext context,
-            IDTOMapperService mapper) : base(context)
-        {
-            _mapper = mapper;
-        }
-
-        public async Task<PagedResultDTO<SavedArticleDTO>>
+        public async Task<PagedResultDTO<SavedArticle>>
             GetPagedAsync(PagedRequestDTO<SavedArticlesFillterDTO> request)
         {
             IQueryable<SavedArticle> query = _appDbContext.Favorites;
+
+            query = query.Include(l => l.Article).ThenInclude(a => a.Status)
+                .Include(l => l.Article).ThenInclude(a => a.Category);
 
             if (request.Filter?.UserId != null)
                 query = query.Where(s => s.UserId == request.Filter.UserId);
@@ -41,11 +38,11 @@ namespace Keeper_ContentService.Repositories.UserArticleActionRepository.Impleme
 
             query = query.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize);
 
-            List<SavedArticleDTO> savedArticleDTOs = _mapper.Map(await query.ToListAsync()).ToList();
+            List<SavedArticle> savedArticles = await query.ToListAsync();
 
-            return new PagedResultDTO<SavedArticleDTO>()
+            return new PagedResultDTO<SavedArticle>()
             {
-                Items = savedArticleDTOs,
+                Items = savedArticles,
                 TotalCount = totalCount
             };
         }

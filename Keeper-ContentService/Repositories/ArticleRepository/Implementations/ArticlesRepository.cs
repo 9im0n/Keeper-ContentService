@@ -18,6 +18,15 @@ namespace Keeper_ContentService.Repositories.ArticleRepository.Implementations
 
             query = query.Include(a => a.Category).Include(a => a.Status);
 
+
+            if (request.Filter?.UserId != null)
+                query = query.Where(a => a.AuthorId == request.Filter.UserId);
+
+            if (!string.IsNullOrEmpty(request.Filter?.StatusName))
+                query = query.Where(a => a.Status.Name == request.Filter.StatusName);
+            else 
+                query = query.Where(a => a.Status.Name == "published");
+
             if (!string.IsNullOrEmpty(request.Filter?.Category))
                 query = query.Where(a => a.Category.Name == request.Filter.Category);
 
@@ -33,6 +42,7 @@ namespace Keeper_ContentService.Repositories.ArticleRepository.Implementations
                 "id" => isDescending ? query.OrderByDescending(a => a.Id) : query.OrderBy(a => a.Id),
                 "title" => isDescending ? query.OrderByDescending(a => a.Title) : query.OrderBy(a => a.Title),
                 "publicationdate" => isDescending ? query.OrderByDescending(a => a.PublicationDate) : query.OrderBy(a => a.PublicationDate),
+                "updatedAt" => isDescending ? query.OrderByDescending(a => a.UpdatedAt) : query.OrderBy(a => a.UpdatedAt),
                 _ => isDescending ? query.OrderByDescending(a => a.Id) : query.OrderBy(a => a.Id)
             };
 

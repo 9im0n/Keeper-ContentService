@@ -8,7 +8,7 @@ namespace Keeper_ContentService.Services.DTOMapperService.Interfaces
         // Single
         public CategoryDTO Map(Category category);
         public ArticleStatusDTO Map(ArticleStatus status);
-        public CommentDTO Map(Comment comment);
+        public CommentDTO Map(Comment comment, ProfileDTO profileDTO);
         public ArticleDTO Map(Article article, bool isLiked, bool isSaved, ProfileDTO profileDTO);
         public LikedArticleDTO Map(LikedArticle likedArticle);
         public SavedArticleDTO Map(SavedArticle savedArticle);
@@ -16,7 +16,7 @@ namespace Keeper_ContentService.Services.DTOMapperService.Interfaces
         // Collection
         public ICollection<CategoryDTO> Map(ICollection<Category> categories);
         public ICollection<ArticleStatusDTO> Map(ICollection<ArticleStatus> articleStatuses);
-        public ICollection<CommentDTO> Map(ICollection<Comment> comments);
+        public ICollection<CommentDTO> Map(ICollection<Comment> comments, ICollection<ProfileDTO> profileDTOs);
         public ICollection<ArticleDTO> Map(ICollection<Article> articles, ICollection<LikedArticle>? likedArticles,
             ICollection<SavedArticle>? savedArticles, ICollection<ProfileDTO> profileDTOs);
         public ICollection<LikedArticleDTO> Map(ICollection<LikedArticle> likedArticles);

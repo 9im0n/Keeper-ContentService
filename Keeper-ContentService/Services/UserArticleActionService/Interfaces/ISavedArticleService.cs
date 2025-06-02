@@ -3,7 +3,7 @@
 namespace Keeper_ContentService.Services.UserArticleActionService.Interfaces
 {
     public interface ISavedArticleService :
-        IUserArticleActionReaderService<SavedArticleDTO, SavedArticlesFillterDTO>,
+        IUserArticleActionReaderService<ArticleDTO, SavedArticlesFillterDTO>,
         IUserArticleActionWriterService
     { }
 }
