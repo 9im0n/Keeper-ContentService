@@ -6,6 +6,7 @@ using Keeper_ContentService.Services.CommentService.Interfaces;
 using Keeper_ContentService.Services.ArticleService.Interfaces;
 using System.Security.Claims;
 using Keeper_ContentService.Services.DTOMapperService.Interfaces;
+using Keeper_ContentService.Services.ProfileService.Interfaces;
 
 namespace Keeper_ContentService.Services.CommentService.Implementations
 {
@@ -13,15 +14,18 @@ namespace Keeper_ContentService.Services.CommentService.Implementations
     {
         private readonly ICommentsRepository _repository;
         private readonly IArticleService _articleService;
+        private readonly IProfileService _profileService;
         private readonly IDTOMapperService _mapper;
 
         public CommentService(
             ICommentsRepository repository,
             IArticleService articleService,
+            IProfileService profileService,
             IDTOMapperService mapper)
         {
             _repository = repository;
             _articleService = articleService;
+            _profileService = profileService;
             _mapper = mapper;
         }
 
@@ -34,8 +38,28 @@ namespace Keeper_ContentService.Services.CommentService.Implementations
             if (!serviceResponse.IsSuccess)
                 return ServiceResponse<PagedResultDTO<CommentDTO>?>.Fail(default, serviceResponse.Status, serviceResponse.Message);
 
-            PagedResultDTO<CommentDTO> commentDTOs = await _repository.GetPagedCommentsAsync(articleId, pagedRequestDTO);
-            return ServiceResponse<PagedResultDTO<CommentDTO>?>.Success(commentDTOs);
+            PagedResultDTO<Comment> comments = await _repository.GetPagedCommentsAsync(articleId, pagedRequestDTO);
+
+            BatchedProfileRequestDTO profileRequest = new BatchedProfileRequestDTO()
+            {
+                profileIds = comments.Items.Select(c => c.AuthorId).Distinct().ToList()
+            };
+
+            ServiceResponse<ICollection<ProfileDTO>?> profilesResponse = await _profileService
+                .GetProfilesBatchAsync(profileRequest);
+
+            if (!profilesResponse.IsSuccess)
+                return ServiceResponse<PagedResultDTO<CommentDTO>?>.Fail(default, profilesResponse.Status, profilesResponse.Message);
+
+            ICollection<CommentDTO> commentDTOs = _mapper.Map(comments.Items, profilesResponse.Data!);
+
+            PagedResultDTO<CommentDTO> result = new PagedResultDTO<CommentDTO>()
+            {
+                Items = commentDTOs.ToList(),
+                TotalCount = comments.TotalCount,
+            };
+
+            return ServiceResponse<PagedResultDTO<CommentDTO>?>.Success(result);
         }
 
 
@@ -63,7 +87,12 @@ namespace Keeper_ContentService.Services.CommentService.Implementations
 
             newComment = await _repository.CreateAsync(newComment);
 
-            CommentDTO commentDTO = _mapper.Map(newComment);
+            ServiceResponse<ProfileDTO?> profileResponse = await _profileService.GetProfileByIdAsync(userId);
+
+            if (!profileResponse.IsSuccess)
+                return ServiceResponse<CommentDTO?>.Fail(default, profileResponse.Status, profileResponse.Message);
+
+            CommentDTO commentDTO = _mapper.Map(newComment, profileResponse.Data!);
 
             return ServiceResponse<CommentDTO?>.Success(commentDTO);
         }

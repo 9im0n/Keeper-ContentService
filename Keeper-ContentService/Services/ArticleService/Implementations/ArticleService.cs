@@ -8,8 +8,6 @@ using Keeper_ContentService.Services.ArticleStatusService.Interfaces;
 using Keeper_ContentService.Services.CategoryService.Interfaces;
 using Keeper_ContentService.Services.DTOMapperService.Interfaces;
 using Keeper_ContentService.Services.ProfileService.Interfaces;
-using Keeper_ContentService.Services.UserArticleActionService.Interfaces;
-using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
 namespace Keeper_ContentService.Services.ArticleService.Implementations
@@ -47,6 +45,24 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
             PagedRequestDTO<ArticlesFillterDTO> pagedRequestDTO,
             ClaimsPrincipal? User = null)
         {
+            ServiceResponse<ArticleStatusDTO?> statusResponse = await _articlesStatusesService.GetPublishedStatusAsync();
+
+            if (!statusResponse.IsSuccess)
+                return ServiceResponse<PagedResultDTO<ArticleDTO>?>.Fail(default, statusResponse.Status, statusResponse.Message);
+
+            Guid? userId = Guid.TryParse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid parsedId)
+                ? parsedId : null;
+
+            Console.WriteLine(pagedRequestDTO.Filter?.StatusName);
+
+            string userRole = User?.FindFirst(ClaimTypes.Role)?.Value ?? "user";
+
+            if (pagedRequestDTO.Filter?.UserId != userId &&
+                pagedRequestDTO.Filter?.StatusName != statusResponse.Data!.Name &&
+                userRole == "user")
+                return ServiceResponse<PagedResultDTO<ArticleDTO>?>.Fail(default, 403, "You don't have required permissions");
+
+
             PagedResponseDTO<Article> pagedResponseDTO = await _articlesRepository.GetPagedArticlesAsync(pagedRequestDTO);
             
             BatchedProfileRequestDTO profileIds = new BatchedProfileRequestDTO() 
@@ -62,14 +78,14 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
             ICollection<ArticleDTO> articleDTOs;
             PagedResultDTO<ArticleDTO> response;
 
-            if (Guid.TryParse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            if (userId != null)
             {
                 ICollection<Guid> articleIds = pagedResponseDTO.Items.Select(a => a.Id).ToList();
                 
                 ICollection<LikedArticle> likedArticles = await _likedArticlesRepository
-                    .GetBatchedByUserAndArticleId(articleIds, userId);
+                    .GetBatchedByUserAndArticleId(articleIds, userId.Value);
                 ICollection<SavedArticle> savedArticles = await _savedArticlesRepository
-                    .GetBatchedByUserAndArticleId(articleIds, userId);
+                    .GetBatchedByUserAndArticleId(articleIds, userId.Value);
 
                 articleDTOs = _mapper.Map(pagedResponseDTO.Items, likedArticles, savedArticles, profileDTOs.Data!);
 
@@ -96,18 +112,32 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
 
         public async Task<ServiceResponse<ArticleDTO?>> GetByIdAsync(Guid id, ClaimsPrincipal? User)
         {
+            ServiceResponse<ArticleStatusDTO?> statusResponse = await _articlesStatusesService.GetPublishedStatusAsync();
+
+            if (!statusResponse.IsSuccess)
+                return ServiceResponse<ArticleDTO?>.Fail(default, statusResponse.Status, statusResponse.Message);
+
+            Guid? userId = Guid.TryParse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid parsedId)
+                ? parsedId : null;
+
+            string userRole = User?.FindFirst(ClaimTypes.Role)?.Value ?? "user";
+
             Article? article = await _articlesRepository.GetByIdAsync(id);
 
             if (article == null)
                 return ServiceResponse<ArticleDTO?>.Fail(default, 404, "Article doesn't exist.");
 
+            if (article.ArticleStatusId != statusResponse.Data!.Id &&
+                article.AuthorId != userId && userRole == "user")
+                return ServiceResponse<ArticleDTO?>.Fail(default, 404, "Article doesn't exist.");
+
             bool isLiked = false;
             bool isSaved = false;
 
-            if (Guid.TryParse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid userId))
+            if (userId != null)
             {
-                isLiked = (await _likedArticlesRepository.GetByUserAndArticleIdAsync(userId, article.Id)) == null ? false : true;
-                isSaved = (await _savedArticlesRepository.GetByUserAndArticleIdAsync(userId, article.Id)) == null ? false : true;
+                isLiked = (await _likedArticlesRepository.GetByUserAndArticleIdAsync(userId.Value, article.Id)) == null ? false : true;
+                isSaved = (await _savedArticlesRepository.GetByUserAndArticleIdAsync(userId.Value, article.Id)) == null ? false : true;
             }
 
             ServiceResponse<ProfileDTO?> profileServiceResponse = await _profileService.GetProfileByIdAsync(article.AuthorId);

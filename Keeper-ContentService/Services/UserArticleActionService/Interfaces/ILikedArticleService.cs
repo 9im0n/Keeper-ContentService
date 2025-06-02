@@ -3,7 +3,7 @@
 namespace Keeper_ContentService.Services.UserArticleActionService.Interfaces
 {
     public interface ILikedArticleService :
-        IUserArticleActionReaderService<LikedArticleDTO, LikedArticlesFillterDTO>,
+        IUserArticleActionReaderService<ArticleDTO, LikedArticlesFillterDTO>,
         IUserArticleActionWriterService
     { }
 }

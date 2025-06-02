@@ -12,18 +12,16 @@ namespace Keeper_ContentService.Repositories.UserArticleActionRepository.Impleme
         BaseRepository<LikedArticle>, 
         ILikedArticlesRepository
     {
-        private readonly IDTOMapperService _mapper;
-
-        public LikedArticlesRepository(AppDbContext context, IDTOMapperService mapper) : base(context)
-        {
-            _mapper = mapper;
-        }
+        public LikedArticlesRepository(AppDbContext context) : base(context) { }
 
 
-        public async Task<PagedResultDTO<LikedArticleDTO>>
+        public async Task<PagedResultDTO<LikedArticle>>
             GetPagedAsync(PagedRequestDTO<LikedArticlesFillterDTO> request)
         {
             IQueryable<LikedArticle> query = _appDbContext.Likes;
+
+            query = query.Include(l => l.Article).ThenInclude(a => a.Status)
+                .Include(l => l.Article).ThenInclude(a => a.Category);
 
             if (request.Filter?.UserId != null)
                 query = query.Where(l => l.UserId == request.Filter.UserId);
@@ -41,11 +39,11 @@ namespace Keeper_ContentService.Repositories.UserArticleActionRepository.Impleme
 
             query = query.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize);
 
-            List<LikedArticleDTO> likedArticleDTOs = _mapper.Map(await query.ToListAsync()).ToList();
+            List<LikedArticle> likedArticles = await query.ToListAsync();
 
-            return new PagedResultDTO<LikedArticleDTO>()
+            return new PagedResultDTO<LikedArticle>()
             {
-                Items = likedArticleDTOs,
+                Items = likedArticles,
                 TotalCount = totalCount
             };
         }

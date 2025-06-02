@@ -24,13 +24,13 @@ namespace Keeper_ContentService.Services.DTOMapperService.Implementations
             };
         }
 
-        public CommentDTO Map(Comment comment)
+        public CommentDTO Map(Comment comment, ProfileDTO profileDTO)
         {
             return new CommentDTO()
             {
                 Id = comment.Id,
                 ArticleId = comment.ArticleId,
-                AuthorId = comment.AuthorId,
+                Author = profileDTO,
                 ParentCommentId = comment.ParentCommentId,
                 Text = comment.Text,
             };
@@ -42,8 +42,8 @@ namespace Keeper_ContentService.Services.DTOMapperService.Implementations
             {
                 Id = article.Id,
                 Category = Map(article.Category),
-                Profile = profileDTO,
-                Satus = Map(article.Status),
+                Author = profileDTO,
+                Status = Map(article.Status),
                 Title = article.Title,
                 Content = article.Content,
                 PublicationDate = article.PublicationDate,
@@ -78,7 +78,19 @@ namespace Keeper_ContentService.Services.DTOMapperService.Implementations
         
         public ICollection<ArticleStatusDTO> Map(ICollection<ArticleStatus> articleStatuses) => articleStatuses.Select(Map).ToList();
         
-        public ICollection<CommentDTO> Map(ICollection<Comment> comments) => comments.Select(Map).ToList();
+        public ICollection<CommentDTO> Map(ICollection<Comment> comments, ICollection<ProfileDTO> profileDTOs)
+        {
+            Dictionary<Guid, ProfileDTO> profilesMap = profileDTOs.ToDictionary(p => p.Id);
+
+            List<CommentDTO> commentDTOs = new List<CommentDTO>();
+
+            foreach (Comment comment in comments)
+            {
+                commentDTOs.Add(Map(comment, profilesMap[comment.AuthorId]));
+            }
+
+            return commentDTOs;
+        }
 
 
         public ICollection<ArticleDTO> Map(
@@ -87,16 +99,13 @@ namespace Keeper_ContentService.Services.DTOMapperService.Implementations
             ICollection<SavedArticle>? savedArticles,
             ICollection<ProfileDTO> profileDTOs)
         {
-            Console.WriteLine(likedArticles == null);
-            Console.WriteLine(savedArticles == null);
+            HashSet<Guid> likedIds = likedArticles?.Select(l => l.ArticleId).ToHashSet() ?? new HashSet<Guid>();
+            HashSet<Guid> savedIds = savedArticles?.Select(s => s.ArticleId).ToHashSet() ?? new HashSet<Guid>();
+            Dictionary<Guid, ProfileDTO> profilesMap = profileDTOs.ToDictionary(p => p.Id);
 
-            var likedIds = likedArticles?.Select(l => l.ArticleId).ToHashSet() ?? new HashSet<Guid>();
-            var savedIds = savedArticles?.Select(s => s.ArticleId).ToHashSet() ?? new HashSet<Guid>();
-            var profilesMap = profileDTOs.ToDictionary(p => p.Id);
+            List<ArticleDTO> articleDTOs = new List<ArticleDTO>();
 
-            var articleDTOs = new List<ArticleDTO>();
-
-            foreach (var article in articles)
+            foreach (Article article in articles)
             {
                 articleDTOs.Add(Map(
                     article,

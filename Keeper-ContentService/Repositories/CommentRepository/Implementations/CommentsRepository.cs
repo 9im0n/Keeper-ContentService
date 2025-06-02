@@ -10,14 +10,9 @@ namespace Keeper_ContentService.Repositories.CommentRepository.Implementations
 {
     public class CommentsRepository : BaseRepository<Comment>, ICommentsRepository
     {
-        private readonly IDTOMapperService _mapper;
+        public CommentsRepository(AppDbContext context) : base(context) { }
 
-        public CommentsRepository(AppDbContext context, IDTOMapperService mapper) : base(context)
-        {
-            _mapper = mapper;
-        }
-
-        public async Task<PagedResultDTO<CommentDTO>> GetPagedCommentsAsync(Guid articleId, PagedRequestDTO<CommentsFilterDTO> request)
+        public async Task<PagedResultDTO<Comment>> GetPagedCommentsAsync(Guid articleId, PagedRequestDTO<CommentsFilterDTO> request)
         {
             IQueryable<Comment> query = _appDbContext.Comments.Where(c => c.ArticleId == articleId);
 
@@ -40,12 +35,12 @@ namespace Keeper_ContentService.Repositories.CommentRepository.Implementations
 
             query = query.Skip((request.Page - 1) * request.PageSize).Take(request.PageSize);
 
-            List<CommentDTO> commentDTOs = _mapper.Map(await query.ToListAsync()).ToList();
+            List<Comment> comments = await query.ToListAsync();
 
-            return new PagedResultDTO<CommentDTO>()
+            return new PagedResultDTO<Comment>()
             {
                 TotalCount = totalCount,
-                Items = commentDTOs,
+                Items = comments,
             };
         }
     }

@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
         public string Text { get; set; } = null!;
-        public Guid AuthorId { get; set; }
+        public ProfileDTO Author { get; set; } = null!;
         public Guid ArticleId { get; set; }
         public Guid? ParentCommentId { get; set; }
     }
