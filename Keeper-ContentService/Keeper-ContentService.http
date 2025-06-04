@@ -1,6 +1,6 @@
 @api = http://localhost:5003
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjNjNTk3OThmLTE0ZWQtNDE5NC05OGQ4LTI2NjM5NmJlZWU1ZSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NDgzNzEzNDEsImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQ2xpZW50In0.aryj955haibVvQ9DiVU_aRVBkyR55Ewd3ytzW9W9DqA
-@articleId = 019702ed-a0e1-7d59-a4d7-a0af7f146e6d
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjNjNTk3OThmLTE0ZWQtNDE5NC05OGQ4LTI2NjM5NmJlZWU1ZSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6InVzZXIiLCJleHAiOjE3NDkwNjM0MzksImlzcyI6IkF1dGhTZXJ2aWNlIiwiYXVkIjoiQ2xpZW50In0._BRZo2CyiIJHvdlTFHk_mNskAmSOiuK6_nNsO6OrhDc
+@articleId = 01973a06-4edd-7c48-9bd3-38b44f3689a0
 @userId = 3c59798f-14ed-4194-98d8-266396beee5e
 
 GET {{api}}/articles?filter.userid={{userId}}
@@ -41,6 +41,17 @@ Authorization: Bearer {{jwt}}
 
 ###
 
+PATCH {{api}}/articles/{{articleId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+  "status": "readyToPublish"
+}
+
+###
+
 DELETE {{api}}/articles/{{articleId}}
 Accept: application/json
 Content-Type: application/json
@@ -48,7 +59,7 @@ Authorization: Bearer {{jwt}}
 
 ###
 
-GET {{api}}/articles/{{articleId}}/comments
+GET {{api}}/articles/{{articleId}}/comments?page=2
 Accept: application/json
 Content-Type: application/json
 

@@ -9,6 +9,6 @@ namespace Keeper_ContentService.Services.ArticleService.Interfaces
         Task<ServiceResponse<ArticleDTO?>> CreateDraftAsync(CreateDraftDTO createDraftDTO, ClaimsPrincipal user);
         Task<ServiceResponse<ArticleDTO?>> UpdateArticleAsync(Guid id, UpdateArticleDTO updateArticleDTO, ClaimsPrincipal user);
         Task<ServiceResponse<object?>> DeleteAsync(Guid id, ClaimsPrincipal user);
+        Task<ServiceResponse<ArticleDTO?>> ChangeStatusAsync(Guid id, ChangeStatusDTO changeStatusDTO, ClaimsPrincipal User);   
     }
-
 }

@@ -9,9 +9,9 @@ namespace Keeper_ContentService.Controllers
     [Route("categories")]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoryReaderService _service;
+        private readonly ICategoryService _service;
 
-        public CategoriesController(ICategoryReaderService service)
+        public CategoriesController(ICategoryService service)
         {
             _service = service;
         }

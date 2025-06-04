@@ -80,9 +80,9 @@ namespace Keeper_ContentService.Services.ArticleStatusService.Implementations
         }
 
 
-        public async Task<ServiceResponse<ArticleStatusDTO?>> GetReadyForPublisStatusAsync()
+        public async Task<ServiceResponse<ArticleStatusDTO?>> GetReadyToPublishStatusAsync()
         {
-            ArticleStatus? statuse = await _repository.GetByNameAsync("readyForPublish");
+            ArticleStatus? statuse = await _repository.GetByNameAsync("readyToPublish");
 
             if (statuse == null)
                 return ServiceResponse<ArticleStatusDTO?>.Fail(default, 404, "Statuse doesn't exist");

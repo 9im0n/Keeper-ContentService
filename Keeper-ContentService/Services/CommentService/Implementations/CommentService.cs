@@ -109,7 +109,7 @@ namespace Keeper_ContentService.Services.CommentService.Implementations
                 return ServiceResponse<object?>.Fail(default,
                     articleServiceResponse.Status, articleServiceResponse.Message);
 
-            Comment? comment = await _repository.GetByIdAsync(articleId);
+            Comment? comment = await _repository.GetByIdAsync(commentId);
 
             if (comment == null)
                 return ServiceResponse<object?>.Fail(default, 404, "Comment doesn't exist");

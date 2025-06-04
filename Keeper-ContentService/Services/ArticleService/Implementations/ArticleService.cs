@@ -21,15 +21,19 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
         private readonly IProfileService _profileService;
         private readonly ILikedArticlesRepository _likedArticlesRepository;
         private readonly ISavedArticlesRepository _savedArticlesRepository;
+        private readonly IEnumerable<IStatusChangeStrategy> _statusChangeStrategies;
 
 
-        public ArticleService(IArticlesRepository articlesRepository,
+        public ArticleService(
+            IArticlesRepository articlesRepository,
             IArticlesStatusesService articlesStatusesService,
             IDTOMapperService mapper,
             ICategoryService categoryService,
             IProfileService profileService,
             ILikedArticlesRepository likedArticlesRepository,
-            ISavedArticlesRepository savedArticlesRepository)
+            ISavedArticlesRepository savedArticlesRepository,
+            IEnumerable<IStatusChangeStrategy> statusChangeStrategies
+        )
         {
             _articlesRepository = articlesRepository;
             _articlesStatusesService = articlesStatusesService;
@@ -38,6 +42,7 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
             _profileService = profileService;
             _likedArticlesRepository = likedArticlesRepository;
             _savedArticlesRepository = savedArticlesRepository;
+            _statusChangeStrategies = statusChangeStrategies;
         }
 
 
@@ -236,6 +241,33 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
             await _articlesRepository.DeleteAsync(id);
 
             return ServiceResponse<object?>.Success(null);
+        }
+
+
+        public async Task<ServiceResponse<ArticleDTO?>> ChangeStatusAsync(Guid id, ChangeStatusDTO changeStatusDTO, ClaimsPrincipal User)
+        {
+            Article? article = await _articlesRepository.GetByIdAsync(id);
+
+            if (article == null)
+                return ServiceResponse<ArticleDTO?>.Fail(default, 404, "Article doesn't exist.");
+
+            
+            foreach (IStatusChangeStrategy strategy in _statusChangeStrategies)
+            {
+                if (await strategy.CanHandle(changeStatusDTO.Status))
+                {
+                    ServiceResponse<Article?> updateArticle = await strategy.ChangeStatusAsync(article, User);
+
+                    if (!updateArticle.IsSuccess)   
+                        return ServiceResponse<ArticleDTO?>.Fail(default, updateArticle.Status, updateArticle.Message);
+
+                    await _articlesRepository.UpdateAsync(updateArticle.Data!);
+
+                    return await GetByIdAsync(id, User);
+                }
+            }
+
+            return ServiceResponse<ArticleDTO?>.Fail(default, 400, "It's imposible to process this status.");
         }
     }
 }

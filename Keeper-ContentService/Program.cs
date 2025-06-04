@@ -87,11 +87,19 @@ namespace Keeper_ContentService
             builder.Services.AddScoped<IDTOMapperService, DTOMapperService>();
             builder.Services.AddScoped<IArticleService, ArticleService>();
             builder.Services.AddScoped<IArticlesStatusesService, ArticleStatusService>();
+            builder.Services.AddScoped<IArticleStatusNamedProvider, ArticleStatusService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ICommentService, CommentService>();
             builder.Services.AddScoped<ILikedArticleService, LikedArticleService>();
             builder.Services.AddScoped<ISavedArticleService, SavedArticleService>();
             builder.Services.AddScoped<IProfileService, ProfileService>();
+
+            // Strategies
+
+            builder.Services.AddScoped<IStatusChangeStrategy, PublishStrategy>();
+            builder.Services.AddScoped<IStatusChangeStrategy, DraftStrategy>();
+            builder.Services.AddScoped<IStatusChangeStrategy, ReviewStrategy>();
+            builder.Services.AddScoped<IStatusChangeStrategy, ReadyToPublishStrategy>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

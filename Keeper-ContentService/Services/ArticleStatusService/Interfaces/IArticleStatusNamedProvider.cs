@@ -8,7 +8,6 @@ namespace Keeper_ContentService.Services.ArticleStatusService.Interfaces
         Task<ServiceResponse<ArticleStatusDTO?>> GetDraftStatusAsync();
         Task<ServiceResponse<ArticleStatusDTO?>> GetReviewStatusAsync();
         Task<ServiceResponse<ArticleStatusDTO?>> GetPublishedStatusAsync();
-        Task<ServiceResponse<ArticleStatusDTO?>> GetReadyForPublisStatusAsync();
+        Task<ServiceResponse<ArticleStatusDTO?>> GetReadyToPublishStatusAsync();
     }
-
 }

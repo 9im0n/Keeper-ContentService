@@ -7,5 +7,6 @@
         public ProfileDTO Author { get; set; } = null!;
         public Guid ArticleId { get; set; }
         public Guid? ParentCommentId { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

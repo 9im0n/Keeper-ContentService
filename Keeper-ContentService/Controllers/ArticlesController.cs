@@ -58,6 +58,16 @@ namespace Keeper_ContentService.Controllers
             return HandleServiceResponse(response);
         }
 
+
+        [Authorize]
+        [HttpPatch("{id:guid}")]
+        public async Task<IActionResult> ChangeStatus(Guid id, [FromBody] ChangeStatusDTO changeStatusDTO)
+        {
+            ServiceResponse<ArticleDTO?> resposne = await _articleService.ChangeStatusAsync(id, changeStatusDTO, User);
+            return HandleServiceResponse(resposne);
+        }
+
+
         private IActionResult HandleServiceResponse<T>(ServiceResponse<T> response)
         {
             if (!response.IsSuccess)

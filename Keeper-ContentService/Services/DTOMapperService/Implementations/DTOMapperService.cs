@@ -33,6 +33,7 @@ namespace Keeper_ContentService.Services.DTOMapperService.Implementations
                 Author = profileDTO,
                 ParentCommentId = comment.ParentCommentId,
                 Text = comment.Text,
+                CreatedAt = comment.CreatedAt
             };
         }
 
