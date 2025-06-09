@@ -209,9 +209,23 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
             if (article.AuthorId != userId)
                 return ServiceResponse<ArticleDTO?>.Fail(default, 403, "You don't have permission to change this article.");
 
+            ServiceResponse<ArticleStatusDTO?> publishedStatus = await _articlesStatusesService.GetPublishedStatusAsync();
+
+            if (!publishedStatus.IsSuccess)
+                return ServiceResponse<ArticleDTO?>.Fail(default, publishedStatus.Status, publishedStatus.Message);
+
+            if (article.ArticleStatusId == publishedStatus.Data!.Id)
+                return ServiceResponse<ArticleDTO?>.Fail(default, 400, "You cannot update published articles.");
+
+            ServiceResponse<ArticleStatusDTO?> draftStatus = await _articlesStatusesService.GetDraftStatusAsync();
+
+            if (!draftStatus.IsSuccess)
+                return ServiceResponse<ArticleDTO?>.Fail(default, draftStatus.Status, draftStatus.Message);
+
             article.Title = updateArticleDTO.Title;
             article.CategoryId = updateArticleDTO.CategoryId;
             article.Content = updateArticleDTO.Content;
+            article.ArticleStatusId = draftStatus.Data!.Id;
             article.UpdatedAt = DateTime.UtcNow;
 
             await _articlesRepository.UpdateAsync(article);
