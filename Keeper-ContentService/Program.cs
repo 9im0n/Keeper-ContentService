@@ -31,6 +31,7 @@ using Keeper_ContentService.Services.HttpClientService.Implementations;
 using Keeper_ContentService.Models.DTO;
 using Keeper_ContentService.Services.ProfileService.Interfaces;
 using Keeper_ContentService.Services.ProfileService.Implementations;
+using DotNetEnv;
 
 namespace Keeper_ContentService
 {
@@ -40,7 +41,14 @@ namespace Keeper_ContentService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            if (builder.Environment.IsDevelopment())
+                builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true);
+            else
+                Env.Load();
+
+            builder.Configuration.AddEnvironmentVariables();
 
             // HttpClient
             builder.Services.AddHttpClient<IHttpClientService, HttpClientService>();
