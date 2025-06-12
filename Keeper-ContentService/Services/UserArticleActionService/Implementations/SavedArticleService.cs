@@ -50,7 +50,7 @@ namespace Keeper_ContentService.Services.UserArticleActionService.Implementation
 
             BatchedProfileRequestDTO profileRequest = new BatchedProfileRequestDTO()
             {
-                profileIds = savedArticles.Items.Select(l => l.UserId).ToList()
+                profileIds = savedArticles.Items.Select(l => l.Article.AuthorId).ToList()
             };
 
             ServiceResponse<ICollection<ProfileDTO>?> profileResponse = await _profileService
