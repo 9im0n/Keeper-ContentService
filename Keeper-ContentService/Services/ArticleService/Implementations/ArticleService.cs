@@ -58,8 +58,6 @@ namespace Keeper_ContentService.Services.ArticleService.Implementations
             Guid? userId = Guid.TryParse(User?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out Guid parsedId)
                 ? parsedId : null;
 
-            Console.WriteLine(pagedRequestDTO.Filter?.StatusName);
-
             string userRole = User?.FindFirst(ClaimTypes.Role)?.Value ?? "user";
 
             if (pagedRequestDTO.Filter?.UserId != userId &&
